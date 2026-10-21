@@ -14,5 +14,5 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: 'FACEAFRICA' },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={`${dmSans.variable} ${fraunces.variable}`}>{children}</body></html>;
+  return <html lang="fr"><body className={`${dmSans.variable} ${fraunces.variable}`}><a className="skip-link" href="#contenu-principal">Aller au contenu</a>{children}</body></html>;
 }
