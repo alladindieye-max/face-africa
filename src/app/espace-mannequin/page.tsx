@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { FormEvent, useEffect, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 type ModelProfile = {
@@ -27,7 +27,7 @@ const blank = {
 };
 
 export default function ModelWorkspacePage() {
-  const client = createSupabaseBrowserClient();
+  const client = useMemo(() => createSupabaseBrowserClient(), []);
   const [form, setForm] = useState(blank);
   const [userId, setUserId] = useState('');
   const [profileId, setProfileId] = useState('');
