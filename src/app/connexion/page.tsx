@@ -26,7 +26,9 @@ export default function ConnexionPage() {
       setStatus('Connexion impossible. Vérifiez vos informations et la confirmation de votre adresse email.');
       return;
     }
-    window.location.assign('/mannequins');
+    const next = new URLSearchParams(window.location.search).get('next');
+    const destination = next && next.startsWith('/') && !next.startsWith('//') ? next : '/espace';
+    window.location.assign(destination);
   }
 
   return <main className="wrap" style={{ maxWidth: 620 }}>
