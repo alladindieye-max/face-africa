@@ -15,7 +15,8 @@ export default function EspacePage() {
   const {data:{user}}=await client.auth.getUser();
   if(!user){window.location.assign('/connexion?next=%2Fespace');return;}
   setUid(user.id);
-  let {data,error}=await client.from('model_profiles').select('*').eq('user_id',user.id).maybeSingle();
+  const {data:initialData,error}=await client.from('model_profiles').select('*').eq('user_id',user.id).maybeSingle();
+  let data=initialData;
   if(error){setMessage('Impossible de charger le profil. Réessayez plus tard.');setLoading(false);return;}
   if(!data){
    const meta=user.user_metadata||{};
