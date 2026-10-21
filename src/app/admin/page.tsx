@@ -1,19 +1,61 @@
 'use client';
 import Link from 'next/link';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
-type P={id:string;display_name:string;city:string;country:string;status:string;membership_tier:string;created_at:string;rejection_reason:string|null};
-type S={key:string;value:unknown;description:string|null};
+import './admin.css';
+
+type Profile = {id:string;display_name:string;city:string;country:string;status:string;membership_tier:string;created_at:string};
+type Activity = {id:string|number;action:string;entity_type:string;created_at:string;metadata:Record<string,unknown>|null};
+const statusLabel:Record<string,string>={draft:'Brouillon',pending_review:'En validation',published:'Publié',rejected:'Modifications demandées',suspended:'Suspendu'};
+function pill(status:string){const cls=status==='published'||status==='approved'?'fa-pill fa-pill-ok':status==='rejected'||status==='suspended'?'fa-pill fa-pill-no':'fa-pill';return <span className={cls}>{statusLabel[status]||status}</span>;}
 export default function AdminPage(){
- const client=createSupabaseBrowserClient();const [loading,setLoading]=useState(true),[allowed,setAllowed]=useState(false),[message,setMessage]=useState(''),[profiles,setProfiles]=useState<P[]>([]),[settings,setSettings]=useState<S[]>([]),[key,setKey]=useState(''),[value,setValue]=useState('{}');
- async function load(){if(!client){setMessage('Service indisponible.');setLoading(false);return;}const {data:{user}}=await client.auth.getUser();if(!user){window.location.assign('/connexion?next=%2Fadmin');return;}const {data:account}=await client.from('user_profiles').select('role').eq('id',user.id).maybeSingle();if(account?.role!=='admin'){setAllowed(false);setLoading(false);return;}setAllowed(true);const [m,s]=await Promise.all([client.from('model_profiles').select('id,display_name,city,country,status,membership_tier,created_at,rejection_reason').order('created_at',{ascending:false}).limit(200),client.from('platform_settings').select('key,value,description').order('key')]);if(m.error)setMessage('Impossible de charger les profils.');else setProfiles((m.data||[]) as P[]);if(!s.error)setSettings((s.data||[]) as S[]);setLoading(false);}
+ const client=createSupabaseBrowserClient();
+ const [loading,setLoading]=useState(true),[allowed,setAllowed]=useState(false),[message,setMessage]=useState('');
+ const [profiles,setProfiles]=useState<Profile[]>([]),[activity,setActivity]=useState<Activity[]>([]);
+ const [counts,setCounts]=useState({profiles:0,photos:0,castings:0,shootings:0,users:0,openPhotos:0});
  useEffect(()=>{void load();},[]);
- async function update(id:string,changes:Partial<P>){if(!client)return;const {error}=await client.from('model_profiles').update(changes).eq('id',id);if(error){setMessage('Modification refusée. Vérifiez le rôle administrateur.');return;}setProfiles(rows=>rows.map(p=>p.id===id?{...p,...changes}:p));setMessage('Profil mis à jour.');}
- async function saveSetting(s:S){const {error}=await client!.from('platform_settings').update({value:s.value}).eq('key',s.key);setMessage(error?'Impossible d’enregistrer le réglage.':'Réglage enregistré.');}
- async function addSetting(){try{const parsed=JSON.parse(value);const {error}=await client!.from('platform_settings').insert({key:key.trim(),value:parsed,description:'Réglage ajouté depuis le tableau administrateur'});if(error){setMessage('Ajout impossible. La clé existe peut-être déjà.');return;}setKey('');setValue('{}');await load();setMessage('Réglage ajouté.');}catch{setMessage('La valeur doit être un JSON valide.');}}
- if(loading)return <main className="wrap page-title"><h1>Administration FACEAFRICA</h1><p>Vérification des autorisations…</p></main>;
- if(!allowed)return <><header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/espace">Mon espace</Link></div></header><main className="wrap" style={{maxWidth:760}}><section className="page-title"><div className="eyebrow">Accès protégé</div><h1>Espace administrateur</h1><p className="lead">Réservé aux comptes auxquels FACEAFRICA a attribué le rôle administrateur.</p></section><section className="empty"><h3>Accès non autorisé</h3><p className="muted">Le rôle administrateur ne peut pas être activé depuis un profil mannequin.</p><Link className="button primary" href="/connexion?next=%2Fadmin">Se connecter</Link></section></main></>;
- return <><header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/espace">Espace mannequin</Link></div></header><main id="contenu-principal" className="wrap" style={{maxWidth:1100}}><section className="page-title"><div className="eyebrow">Contrôle de la plateforme</div><h1>Administration FACEAFRICA</h1><p className="lead">Validez les profils, gérez les offres et modifiez les réglages configurables.</p></section>{message&&<p className="notice" role="status">{message}</p>}
- <section className="feature"><h2>Profils mannequins ({profiles.length})</h2><div style={{overflowX:'auto'}}><table style={{width:'100%',borderCollapse:'collapse',textAlign:'left'}}><thead><tr><th style={{padding:10}}>Profil</th><th style={{padding:10}}>Statut</th><th style={{padding:10}}>Offre</th><th style={{padding:10}}>Action</th></tr></thead><tbody>{profiles.map(p=><tr key={p.id} style={{borderTop:'1px solid var(--line)'}}><td style={{padding:10}}><strong>{p.display_name}</strong><br/><small>{p.city}, {p.country}</small></td><td style={{padding:10}}><select value={p.status} aria-label={'Statut '+p.display_name} onChange={e=>void update(p.id,{status:e.target.value})}><option value="draft">Brouillon</option><option value="pending_review">En attente</option><option value="published">Publié</option><option value="rejected">Refusé</option><option value="suspended">Suspendu</option></select></td><td style={{padding:10}}><select value={p.membership_tier} aria-label={'Offre '+p.display_name} onChange={e=>void update(p.id,{membership_tier:e.target.value})}><option>BASIC</option><option>STANDARD</option><option>PRO</option></select></td><td style={{padding:10}}><button className="button" onClick={()=>void update(p.id,{status:'published'})}>Valider</button></td></tr>)}</tbody></table></div>{!profiles.length&&<p className="muted">Aucun profil enregistré.</p>}</section>
- <section className="feature" style={{marginTop:22}}><h2>Réglages configurables du site</h2><p className="muted">Les réglages sont enregistrés en base. Pour afficher une valeur sur une page, cette page doit lire la clé correspondante.</p>{settings.map(s=><div className="field" key={s.key} style={{marginTop:16}}><label htmlFor={'setting-'+s.key}>{s.key}{s.description?' — '+s.description:''}</label><textarea id={'setting-'+s.key} rows={3} value={JSON.stringify(s.value,null,2)} onChange={e=>{try{const parsed=JSON.parse(e.target.value);setSettings(rows=>rows.map(r=>r.key===s.key?{...r,value:parsed}:r));}catch{/* conserve la dernière valeur JSON valide */}}}/><button className="button" style={{marginTop:8}} onClick={()=>void saveSetting(s)}>Enregistrer</button></div>)}<div className="field" style={{marginTop:22}}><label htmlFor="new-key">Nouvelle clé de réglage</label><input id="new-key" value={key} onChange={e=>setKey(e.target.value.replace(/[^a-zA-Z0-9_-]/g,'').slice(0,80))} placeholder="homepage_announcement"/></div><div className="field" style={{marginTop:10}}><label htmlFor="new-value">Valeur JSON</label><textarea id="new-value" rows={3} value={value} onChange={e=>setValue(e.target.value)}/></div><button className="button primary" style={{marginTop:12}} disabled={!key.trim()} onClick={()=>void addSetting()}>Ajouter un réglage</button></section></main><footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/">Accueil</Link></div></footer></>;
+ async function load(){
+  if(!client){setMessage('Service indisponible.');setLoading(false);return;}
+  const {data:{user}}=await client.auth.getUser();
+  if(!user){window.location.assign('/connexion?next=%2Fadmin');return;}
+  const {data:account}=await client.from('user_profiles').select('role').eq('id',user.id).maybeSingle();
+  if(account?.role!=='admin'){setLoading(false);return;} setAllowed(true);
+  const [p,ph,c,sh,u,pend,log]=await Promise.all([
+   client.from('model_profiles').select('id,display_name,city,country,status,membership_tier,created_at',{count:'exact'}).order('created_at',{ascending:false}).limit(8),
+   client.from('model_photos').select('id',{count:'exact',head:true}),
+   client.from('castings').select('id',{count:'exact',head:true}).in('status',['pending_payment','payment_pending','paid_pending_review']),
+   client.from('shooting_requests').select('id',{count:'exact',head:true}).in('status',['received','under_review','finding_photographer']),
+   client.from('user_profiles').select('id',{count:'exact',head:true}),
+   client.from('model_photos').select('id',{count:'exact',head:true}).eq('moderation_status','pending'),
+   client.from('audit_log').select('id,action,entity_type,created_at,metadata').order('created_at',{ascending:false}).limit(6)
+  ]);
+  if(p.error)setMessage('Impossible de charger les profils. Vérifiez les politiques d’accès Supabase.');
+  else setProfiles((p.data||[]) as Profile[]);
+  setCounts({profiles:p.count||0,photos:ph.count||0,castings:c.count||0,shootings:sh.count||0,users:u.count||0,openPhotos:pend.count||0});
+  setActivity((log.data||[]) as Activity[]);setLoading(false);
+ }
+ if(loading)return <main className="fa-admin fa-main"><h1 className="fa-title">Administration FACEAFRICA</h1><p>Vérification des autorisations…</p></main>;
+ if(!allowed)return <main className="fa-admin fa-main" style={{maxWidth:760,margin:'0 auto'}}><Link href="/" className="fa-row">← FACEAFRICA</Link><h1 className="fa-title">Espace administrateur</h1><section className="fa-card"><h2>Accès non autorisé</h2><p>Cette zone est réservée aux comptes auxquels le rôle administrateur a été attribué dans Supabase.</p><Link className="fa-button fa-primary" href="/connexion?next=%2Fadmin">Se connecter</Link></section></main>;
+ return <div className="fa-admin"><div className="fa-app"><aside className="fa-sidebar">
+  <Link className="fa-logo" href="/"><span className="fa-logo-mark">F</span>FACEAFRICA</Link>
+  <Link className="fa-nav-link" aria-current="page" href="/admin">Tableau de bord</Link>
+  <div className="fa-nav-label">Modération</div><Link className="fa-nav-link" href="/admin/moderation">Profils à valider</Link><Link className="fa-nav-link" href="/admin/moderation?tab=photos">Photos à modérer <i className="fa-count">{counts.openPhotos}</i></Link><Link className="fa-nav-link" href="/admin/moderation?tab=castings">Annonces</Link>
+  <div className="fa-nav-label">Activité</div><Link className="fa-nav-link" href="/admin/shootings">Shootings & photographes</Link><Link className="fa-nav-link" href="/admin/conformite">Conformité & audit</Link>
+  <div className="fa-nav-label">Plateforme</div><Link className="fa-nav-link" href="/admin/conformite#parametres">Paramètres</Link><Link className="fa-nav-link" href="/espace">Espace mannequin ↗</Link>
+ </aside><main className="fa-main">
+  <div className="fa-top"><div><h1 className="fa-title">Tableau de bord</h1><p className="fa-muted">Vue d’ensemble de l’activité réelle de FACEAFRICA</p></div><div className="fa-row"><input className="fa-search" aria-label="Rechercher" placeholder="Rechercher un profil…" onKeyDown={e=>{if(e.key==='Enter'){const q=(e.currentTarget.value||'').trim();if(q)window.location.assign('/admin/moderation?q='+encodeURIComponent(q));}}}/><span className="fa-role">Administrateur</span></div></div>
+  {message&&<p className="fa-notice" role="status">{message}</p>}
+  <section className="fa-kpis">
+   <article className="fa-kpi"><div className="fa-muted">Profils mannequins</div><div className="fa-kpi-number">{counts.profiles}</div><Link href="/admin/moderation">Ouvrir la file →</Link></article>
+   <article className="fa-kpi"><div className="fa-muted">Photos à modérer</div><div className="fa-kpi-number">{counts.openPhotos}</div><Link href="/admin/moderation?tab=photos">Modérer →</Link></article>
+   <article className="fa-kpi"><div className="fa-muted">Annonces à examiner</div><div className="fa-kpi-number">{counts.castings}</div><Link href="/admin/moderation?tab=castings">Examiner →</Link></article>
+   <article className="fa-kpi"><div className="fa-muted">Demandes de shooting actives</div><div className="fa-kpi-number">{counts.shootings}</div><Link href="/admin/shootings">Gérer →</Link></article>
+   <article className="fa-kpi"><div className="fa-muted">Comptes enregistrés</div><div className="fa-kpi-number">{counts.users}</div></article>
+   <article className="fa-kpi"><div className="fa-muted">Photos enregistrées</div><div className="fa-kpi-number">{counts.photos}</div></article>
+  </section>
+  <div className="fa-columns">
+   <section className="fa-card"><div className="fa-top"><h2 className="fa-subtitle">Profils récents</h2><Link href="/admin/moderation">Tout voir →</Link></div><div className="fa-scroll"><table className="fa-table"><thead><tr><th>Profil</th><th>Formule</th><th>Statut</th></tr></thead><tbody>{profiles.map(p=><tr key={p.id}><td><strong>{p.display_name}</strong><br/><span className="fa-muted">{p.city}, {p.country}</span></td><td>{p.membership_tier}</td><td>{pill(p.status)}</td></tr>)}</tbody></table></div>{!profiles.length&&<p className="fa-muted">Aucun profil enregistré pour le moment.</p>}</section>
+   <section className="fa-card"><div className="fa-top"><h2 className="fa-subtitle">Journal récent</h2><Link href="/admin/conformite">Journal complet →</Link></div>{activity.map(a=><div key={a.id} style={{padding:'10px 0',borderBottom:'1px solid #efe3d6'}}><strong>{a.action}</strong><div className="fa-muted">{a.entity_type} · {new Date(a.created_at).toLocaleString('fr-FR')}</div></div>)}{!activity.length&&<p className="fa-muted">Aucune activité journalisée pour le moment.</p>}</section>
+  </div>
+ </main></div></div>;
 }
