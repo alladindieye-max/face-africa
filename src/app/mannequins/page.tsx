@@ -48,8 +48,9 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
     } else {
       profiles = await Promise.all(((result.data || []) as Profile[]).map(async (profile) => {
         if (!profile.main_photo_path) return { ...profile, photoUrl: null };
-        const { data } = await client.storage.from('model-photos').createSignedUrl(profile.main_photo_path, 60 * 60);
-        return { ...profile, photoUrl: data?.signedUrl ?? null };
+        // The bucket stays private; signed URLs are short-lived and only generated for approved paths.
+        const { data, error: signingError } = await client.storage.from('model-photos').createSignedUrl(profile.main_photo_path, 15 * 60);
+        return { ...profile, photoUrl: !signingError ? data?.signedUrl ?? null : null };
       }));
     }
   }
