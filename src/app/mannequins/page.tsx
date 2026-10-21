@@ -57,7 +57,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
 
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><nav className="nav-links"><Link href="/">Accueil</Link><Link href="/mannequins">Mannequins</Link><Link href="/photographes">Nos Photographes</Link><Link href="/shooting-photo">Shooting</Link></nav><Link className="button primary" href="/inscription">Créer mon profil</Link></div></header>
-    <main className="wrap">
+    <main id="contenu-principal" className="wrap">
       <div className="page-title"><div className="eyebrow">Catalogue professionnel</div><h1>Découvrez les mannequins.</h1><p className="lead">Explorez les profils publiés et validés par FACEAFRICA. Les profils STANDARD et PRO sont présentés en priorité.</p></div>
       <form className="search-panel" action="/mannequins">
         <div className="field"><label htmlFor="q">Nom ou prénom</label><input id="q" name="q" defaultValue={params.q} placeholder="Rechercher un mannequin" /></div>
