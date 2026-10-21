@@ -60,7 +60,7 @@ export default async function CastingsPage() {
           <Link className="button primary" href="/inscription">Créer mon profil</Link>
         </div>
       </header>
-      <main className="wrap">
+      <main id="contenu-principal" className="wrap">
         <section className="page-title">
           <div className="eyebrow">Opportunités professionnelles · Dakar et Afrique</div>
           <h1>Les castings FACEAFRICA.</h1>
