@@ -48,7 +48,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function ModelProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const client = createSupabasePublicClient();
-  if (!client) return <main className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
+  if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
     .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,phone_public,email_public,main_photo_path,portfolio_photo_paths,membership_tier')
