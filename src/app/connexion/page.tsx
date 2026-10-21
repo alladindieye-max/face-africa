@@ -27,8 +27,18 @@ export default function ConnexionPage() {
       return;
     }
     const next = new URLSearchParams(window.location.search).get('next');
-    const destination = next && next.startsWith('/') && !next.startsWith('//') ? next : '/espace';
-    window.location.assign(destination);
+    if (next && next.startsWith('/') && !next.startsWith('//')) {
+      window.location.assign(next);
+      return;
+    }
+    // Sans destination explicite, router selon le rôle réellement enregistré.
+    const { data: { user } } = await client.auth.getUser();
+    if (user) {
+      const { data: account } = await client.from('user_profiles').select('role').eq('id', user.id).maybeSingle();
+      window.location.assign(account?.role === 'admin' ? '/admin' : '/espace');
+      return;
+    }
+    window.location.assign('/espace');
   }
 
   return <main className="wrap" style={{ maxWidth: 620 }}>
