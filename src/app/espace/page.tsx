@@ -37,7 +37,7 @@ export default function EspacePage() {
    const name=String(meta.artist_name||'Mon profil');
    const slugBase=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||'mannequin';
    const {data:created,error:ce}=await client.from('model_profiles').insert({user_id:user.id,slug:slugBase+'-'+user.id.slice(0,8),display_name:name,city:String(meta.city||'Dakar'),country:String(meta.country||'Sénégal'),specialties:[],languages:[],measurements:{},visibility:{bio:true,experience:false,languages:false,availability:false,agency:false,measurements:false,phone:false,email:false},professional_links:{},status:'draft',membership_tier:'BASIC'}).select('*').single();
-   if(ce){setMessage('Compte connecté, mais le profil n’a pas pu être créé. Actualisez la page ou contactez FACEAFRICA.');setLoading(false);return;} data=created;
+   if(ce){console.error('[FACEAFRICA] model profile creation failed',{code:ce.code,message:ce.message,details:ce.details,hint:ce.hint});setMessage('Le profil n’a pas pu être créé ('+(ce.code||'erreur')+'): '+ce.message);setLoading(false);return;} data=created;
   }
   const p=data as P;setProfile(p);
   const {data:rows}=await client.from('model_photos').select('id,storage_path,photo_type,moderation_status,created_at').eq('model_profile_id',p.id).order('created_at',{ascending:false});
