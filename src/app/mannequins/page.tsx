@@ -20,7 +20,7 @@ type DisplayProfile = Profile & { photoUrl: string | null };
 
 function TierBadge({ tier }: { tier: Profile['membership_tier'] }) {
   if (tier !== 'STANDARD' && tier !== 'PRO') return null;
-  return <span className="tag" style={{ background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Mannequin Vérifié ✓ · {tier}</span>;
+  return <div className="tags"><span className="tag" style={{ background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>{tier === 'PRO' && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
 }
 
 export default async function ModelsPage({ searchParams }: { searchParams: Promise<{ q?: string; city?: string; specialty?: string }> }) {
