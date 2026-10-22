@@ -12,3 +12,22 @@
 @media(max-width:680px){.hero-fashion .hero-grid{grid-template-columns:1fr}.hero-fashion{padding:42px 0}.fashion-stage{height:370px}.home-search{grid-template-columns:1fr;margin-bottom:48px}.home-search .search-keyword,.home-search button{grid-column:auto}.hero-fashion h1{font-size:clamp(40px,12vw,60px)}}
 
 .skip-link{position:absolute;left:12px;top:-100px;z-index:1000;padding:12px 16px;background:#fffaf4;color:#1a1a1a;border:2px solid #573b2d;border-radius:8px;font-weight:700}.skip-link:focus{top:12px}
+
+/* Espace mannequin — présentation alignée sur les maquettes FACEAFRICA */
+.model-dashboard{color:#1a1a1a}
+.model-dashboard .feature{background:#fffaf4;border:1px solid #e3d2c3;border-radius:15px;box-shadow:none;padding:20px}
+.model-dashboard .eyebrow{font-size:10px;letter-spacing:.2em;color:#a65b3a}
+.model-dashboard h1,.model-dashboard h2,.model-dashboard h3{color:#201b18}
+.model-dashboard h1{font-size:clamp(32px,3.2vw,42px);margin:8px 0 12px;max-width:none}
+.model-dashboard h2{font-size:23px;margin:0 0 12px}
+.model-dashboard .muted{color:#897569;font-size:12px;line-height:1.6}
+.model-dashboard .g{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #efe3d6;padding:10px 0;font-size:12px}
+.model-dashboard .tag{display:inline-flex;align-items:center;border-radius:99px;background:#f3e8dd;padding:6px 10px;color:#573b2d;font-size:11px;font-weight:700}
+.model-dashboard .button{min-height:40px;font-size:12px}
+.model-dashboard .portrait{background:#e7d7ca;border-radius:9px}
+.model-dashboard .model-grid{gap:10px}
+.model-dashboard .model-card{background:transparent;box-shadow:none;padding:0;border:0}
+.model-dashboard .model-info{padding:8px 2px}
+.model-dashboard .model-info p{font-size:11px}
+.model-dashboard .tier-cta{width:100%;border:1px dashed #c87955;border-radius:9px;padding:12px;background:transparent;color:#a65b3a;font-weight:700}
+@media(max-width:760px){.model-dashboard .model-layout{grid-template-columns:1fr!important}.model-dashboard .feature{padding:16px}.model-dashboard h1{font-size:32px}.model-dashboard .model-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
