@@ -61,7 +61,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
       <div className="page-title"><div className="eyebrow">Catalogue professionnel</div><h1>Découvrez les mannequins.</h1><p className="lead">Explorez les profils publiés et validés par FACEAFRICA. Les profils STANDARD et PRO sont présentés en priorité.</p></div>
       <form className="search-panel" action="/mannequins">
         <div className="field"><label htmlFor="q">Nom ou prénom</label><input id="q" name="q" defaultValue={params.q} placeholder="Rechercher un mannequin" /></div>
-        <div className="field"><label htmlFor="city">Ville</label><select id="city" name="city" defaultValue={params.city || 'Dakar'}><option>Dakar</option><option value="Toutes les villes">Toutes les villes</option></select></div>
+        <div className="field"><label htmlFor="city">Ville</label><select id="city" name="city" defaultValue={params.city || 'Toutes les villes'}><option>Dakar</option><option value="Toutes les villes">Toutes les villes</option></select></div>
         <div className="field"><label htmlFor="specialty">Spécialité</label><select id="specialty" name="specialty" defaultValue={params.specialty || ''}><option value="">Toutes les spécialités</option><option>Mode</option><option>Éditorial</option><option>Commercial</option><option>Défilé</option><option>Beauté</option><option>Lifestyle</option></select></div>
         <button className="button primary" type="submit">Rechercher</button>
       </form>
