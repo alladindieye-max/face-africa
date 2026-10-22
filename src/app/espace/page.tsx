@@ -21,7 +21,8 @@ export default function EspacePage() {
   if(!data){
    const meta=user.user_metadata||{};
    const name=String(meta.artist_name||'Mon profil');
-   const slugBase=name.toLowerCase().normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||'mannequin';\n   const {data:created,error:ce}=await client.from('model_profiles').insert({user_id:user.id,slug:slugBase+'-'+user.id.slice(0,8),display_name:name,city:String(meta.city||'Dakar'),country:String(meta.country||'Sénégal'),specialties:[],languages:[],measurements:{},visibility:{},professional_links:{},status:'draft',membership_tier:'BASIC'}).select('*').single();
+   const slugBase=name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,50)||'mannequin';
+   const {data:created,error:ce}=await client.from('model_profiles').insert({user_id:user.id,slug:slugBase+'-'+user.id.slice(0,8),display_name:name,city:String(meta.city||'Dakar'),country:String(meta.country||'Sénégal'),specialties:[],languages:[],measurements:{},visibility:{},professional_links:{},status:'draft',membership_tier:'BASIC'}).select('*').single();
    if(ce){setMessage('Compte connecté, mais le profil n’a pas pu être créé. Actualisez la page ou contactez FACEAFRICA.');setLoading(false);return;} data=created;
   }
   setProfile(data as P);
@@ -45,7 +46,8 @@ export default function EspacePage() {
   setBusy(true);setMessage('');const ext=file.type==='image/png'?'png':file.type==='image/webp'?'webp':'jpg';const path=uid+'/'+profile.id+'/'+crypto.randomUUID()+'.'+ext;
   const {error:up}=await client.storage.from('model-photos').upload(path,file,{contentType:file.type,upsert:false});
   if(up){setBusy(false);setMessage('Envoi impossible. Les droits de stockage doivent être configurés.');return;}
-  const photoType=photos.some(existing=>existing.photo_type==='main')?'portfolio':'main';\n  const {error:row}=await client.from('model_photos').insert({model_profile_id:profile.id,storage_path:path,photo_type:photoType,moderation_status:'pending',sort_order:photos.length});
+  const photoType=photos.some(existing=>existing.photo_type==='main')?'portfolio':'main';
+  const {error:row}=await client.from('model_photos').insert({model_profile_id:profile.id,storage_path:path,photo_type:photoType,moderation_status:'pending',sort_order:photos.length});
   if(row){await client.storage.from('model-photos').remove([path]);setBusy(false);setMessage('Photo envoyée mais non enregistrée. Réessayez.');return;}
   input.value='';setBusy(false);setMessage('Photo reçue et mise en attente de validation.');await load();
  }
