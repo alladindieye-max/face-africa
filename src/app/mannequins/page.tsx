@@ -14,13 +14,15 @@ type Profile = {
   main_photo_path: string | null;
   membership_tier: 'BASIC' | 'STANDARD' | 'PRO' | null;
   membership_sort_order: number;
+  is_verified: boolean;
+  is_featured: boolean;
 };
 
 type DisplayProfile = Profile & { photoUrl: string | null };
 
-function TierBadge({ tier }: { tier: Profile['membership_tier'] }) {
-  if (tier !== 'STANDARD' && tier !== 'PRO') return null;
-  return <div className="tags"><span className="tag" style={{ background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>{tier === 'PRO' && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
+function TierBadge({ tier, verified, featured }: { tier: Profile['membership_tier']; verified: boolean; featured: boolean }) {
+  if (tier !== 'STANDARD' && tier !== 'PRO' && !verified && !featured) return null;
+  return <div className="tags">{tier !== 'BASIC' && tier && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>{tier === 'PRO' ? 'PRO' : 'STANDARD'}</span>}{verified && <span className="tag" style={{ background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Mannequin Vérifié ✓</span>}{featured && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
 }
 
 export default async function ModelsPage({ searchParams }: { searchParams: Promise<{ q?: string; city?: string; specialty?: string }> }) {
@@ -33,7 +35,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
   if (client) {
     let query = client
       .from('public_model_profiles')
-      .select('id,slug,display_name,city,country,specialties,main_photo_path,membership_tier,membership_sort_order')
+      .select('id,slug,display_name,city,country,specialties,main_photo_path,membership_tier,membership_sort_order,is_verified,is_featured')
       .order('membership_sort_order', { ascending: true })
       .order('city', { ascending: true })
       .order('display_name', { ascending: true })
@@ -74,7 +76,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
             {p.photoUrl ? <Image src={p.photoUrl} alt={`Portrait de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized />
               : <div className="empty"><p>{p.main_photo_path ? 'Photo momentanément indisponible' : 'Photo non encore validée'}</p></div>}
           </div>
-          <div className="model-info"><TierBadge tier={p.membership_tier} /><h3>{p.display_name}</h3><p>{p.city}, {p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
+          <div className="model-info"><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h3>{p.display_name}</h3><p>{p.city}, {p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
         </article>)}</div>}
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><small>© FACEAFRICA · Catalogue professionnel</small><Link href="/">Retour à l’accueil</Link></div></footer>
