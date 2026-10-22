@@ -7,6 +7,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 export default function ConnexionPage() {
   const [status, setStatus] = useState('');
   const [busy, setBusy] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,7 +47,7 @@ export default function ConnexionPage() {
     <section className="page-title"><div className="eyebrow">Espace personnel</div><h1>Connexion</h1><p className="lead">Connectez-vous à votre compte FACEAFRICA.</p></section>
     <form className="feature" onSubmit={submit}>
       <div className="field"><label htmlFor="email">Adresse email</label><input id="email" name="email" type="email" autoComplete="email" required maxLength={320}/></div>
-      <div className="field" style={{ marginTop: 16 }}><label htmlFor="password">Mot de passe</label><input id="password" name="password" type="password" autoComplete="current-password" required/></div>
+      <div className="field" style={{ marginTop: 16 }}><label htmlFor="password">Mot de passe</label><div style={{display:"flex",gap:8,alignItems:"stretch"}}><input id="password" name="password" type={showPassword ? "text" : "password"} autoComplete="current-password" required style={{flex:1,minWidth:0}}/><button type="button" className="button" onClick={()=>setShowPassword(value=>!value)} aria-controls="password" aria-pressed={showPassword} style={{whiteSpace:"nowrap"}}>{showPassword ? "Masquer" : "Afficher"}</button></div></div>
       <p><Link href="/mot-de-passe-oublie">Mot de passe oublié ?</Link></p>
       <button className="button primary" type="submit" disabled={busy}>{busy ? 'Connexion…' : 'Se connecter'}</button>
       {status && <p className="notice" role="status" aria-live="polite">{status}</p>}
