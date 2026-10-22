@@ -20,7 +20,7 @@ export default function MotDePasseOubliePage() {
     const email = String(form.get('email') || '').trim();
     setBusy(true);
     const { error } = await client.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reinitialiser-mot-de-passe`,
+      redirectTo: 'https://faceafrica.vercel.app/reinitialiser-mot-de-passe',
     });
     setBusy(false);
     setStatus(error
