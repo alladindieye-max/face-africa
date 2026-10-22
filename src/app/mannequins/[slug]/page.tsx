@@ -16,8 +16,6 @@ type PublicProfile = {
   agency_name: string | null;
   public_bio: string | null;
   measurements: Record<string, unknown> | null;
-  phone_public: string | null;
-  email_public: string | null;
   main_photo_path: string | null;
   portfolio_photo_paths: string[] | null;
   membership_tier: 'BASIC' | 'STANDARD' | 'PRO' | null;
@@ -37,7 +35,7 @@ const measurementLabels: Record<string, string> = {
 
 function TierBadge({ tier }: { tier: PublicProfile['membership_tier'] }) {
   if (tier !== 'STANDARD' && tier !== 'PRO') return null;
-  return <span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Mannequin Vérifié ✓ · {tier}</span>;
+  return <span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -51,7 +49,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
-    .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,phone_public,email_public,main_photo_path,portfolio_photo_paths,membership_tier')
+    .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,main_photo_path,portfolio_photo_paths,membership_tier')
     .eq('slug', slug).maybeSingle();
   if (error || !data) notFound();
 
@@ -79,17 +77,14 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
         </div>)}
       </section> : <section className="empty"><h3>Portfolio en préparation</h3><p className="muted">Aucune photo approuvée n’est disponible pour le moment. Les photos privées ou en attente de validation ne sont jamais affichées.</p></section>}
       <section className="feature">
-        <h2>À propos</h2><p>{p.public_bio || 'Aucune biographie publique renseignée.'}</p>
-        <h3>Spécialités</h3><div className="tags">{(p.specialties || []).length ? p.specialties?.map((s) => <span className="tag" key={s}>{s}</span>) : <span className="muted">Non renseignées</span>}</div>
+        {(p.public_bio || (p.specialties || []).length > 0) && <><h2>À propos</h2>{p.public_bio && <p>{p.public_bio}</p>}{(p.specialties || []).length > 0 && <><h3>Spécialités</h3><div className="tags">{p.specialties?.map((s) => <span className="tag" key={s}>{s}</span>)}</div></>}</>}
         {p.experience && <><h3>Expérience</h3><p>{p.experience}</p></>}
         {p.languages?.length ? <><h3>Langues</h3><p>{p.languages.join(', ')}</p></> : null}
         {p.availability && <><h3>Disponibilité</h3><p>{p.availability}</p></>}
         {p.agency_name && <><h3>Représentation</h3><p>{p.agency_name}</p></>}
         {visibleMeasurements.length > 0 && <><h3>Mensurations et caractéristiques</h3><div className="tags">{visibleMeasurements.map(([key, value]) => <span className="tag" key={key}>{measurementLabels[key] || key.replaceAll('_', ' ')} : {String(value)}</span>)}</div></>}
-        {p.phone_public && <p>Téléphone professionnel : {p.phone_public}</p>}
-        {p.email_public && <p>Email professionnel : {p.email_public}</p>}
-        <p className="notice">Seules les informations autorisées par le profil public sont affichées. Les coordonnées et mensurations restent masquées si le mannequin ne les a pas rendues publiques.</p>
-        <Link className="button primary" href={`/shooting-photo?model=${encodeURIComponent(p.display_name)}`}>Demander une séance photo</Link>
+        <p className="notice">Pour contacter ce mannequin, passez par FACEAFRICA. Les coordonnées personnelles ne sont pas affichées publiquement.</p>
+        <Link className="button primary" href={`/shooting-photo?model=${encodeURIComponent(p.display_name)}`}>Contacter via FACEAFRICA</Link>
       </section>
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/mannequins">Retour au catalogue</Link></div></footer>
