@@ -65,10 +65,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
     return { path, url: signed.signedUrl };
   }));
   const visiblePhotos = photos.filter((photo): photo is { path: string; url: string } => Boolean(photo));
-  // The public view already applies each model's visibility preferences. Render only scalar values.
-  const visibleMeasurements = Object.entries(p.measurements || {}).filter(([, value]) =>
-    (typeof value === 'string' || typeof value === 'number') && String(value).trim() !== ''
-  );
+  // Privacy by default: measurements stay hidden until values and display permissions are validated.
 
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
@@ -85,7 +82,6 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
         {p.languages?.length ? <><h3>Langues</h3><p>{p.languages.join(', ')}</p></> : null}
         {p.availability && <><h3>Disponibilité</h3><p>{p.availability}</p></>}
         {p.agency_name && <><h3>Représentation</h3><p>{p.agency_name}</p></>}
-        {visibleMeasurements.length > 0 && <><h3>Mensurations et caractéristiques</h3><div className="tags">{visibleMeasurements.map(([key, value]) => <span className="tag" key={key}>{measurementLabels[key] || key.replaceAll('_', ' ')} : {String(value)}</span>)}</div></>}
         <p className="notice">Pour contacter ce mannequin, passez par FACEAFRICA. Les coordonnées personnelles ne sont pas affichées publiquement.</p>
         <Link className="button primary" href={`/shooting-photo?model=${encodeURIComponent(p.display_name)}`}>Contacter via FACEAFRICA</Link>
       </section>
