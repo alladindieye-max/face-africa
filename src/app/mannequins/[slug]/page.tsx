@@ -60,7 +60,8 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   // Short-lived signed URLs keep the Storage bucket private while allowing the browser to load approved photos.
   const photos = await Promise.all(photoPaths.map(async (path) => {
     const { data: signed, error: signingError } = await client.storage.from('model-photos').createSignedUrl(path, 15 * 60);
-    return !signingError && signed?.signedUrl ? { path, url: signed.signedUrl } : null;
+    if (signingError || !signed?.signedUrl) { console.error('[FACEAFRICA] Photo signing failed', { path, message: signingError?.message || 'No signed URL returned' }); return null; }
+    return { path, url: signed.signedUrl };
   }));
   const visiblePhotos = photos.filter((photo): photo is { path: string; url: string } => Boolean(photo));
   // The public view already applies each model's visibility preferences. Render only scalar values.
