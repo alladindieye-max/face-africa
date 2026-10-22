@@ -20,6 +20,8 @@ type PublicProfile = {
   
   portfolio_photo_paths: string[] | null;
   membership_tier: 'BASIC' | 'STANDARD' | 'PRO' | null;
+  is_verified: boolean;
+  is_featured: boolean;
 };
 
 const measurementLabels: Record<string, string> = {
@@ -34,9 +36,9 @@ const measurementLabels: Record<string, string> = {
   hair_color: 'Couleur des cheveux',
 };
 
-function TierBadge({ tier }: { tier: PublicProfile['membership_tier'] }) {
-  if (tier !== 'STANDARD' && tier !== 'PRO') return null;
-  return <div className="tags"><span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>{tier === 'PRO' && <span className="tag" style={{ display: 'inline-flex', background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
+function TierBadge({ tier, verified, featured }: { tier: PublicProfile['membership_tier']; verified: boolean; featured: boolean }) {
+  if (tier !== 'STANDARD' && tier !== 'PRO' && !verified && !featured) return null;
+  return <div className="tags">{tier !== 'BASIC' && tier && <span className="tag" style={{ display: 'inline-flex', background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>{tier}</span>}{verified && <span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Mannequin Vérifié ✓</span>}{featured && <span className="tag" style={{ display: 'inline-flex', background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -50,7 +52,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
-    .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,main_photo_path,portfolio_photo_paths,membership_tier')
+    .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,main_photo_path,portfolio_photo_paths,membership_tier,is_verified,is_featured')
     .eq('slug', slug).maybeSingle();
   if (error || !data) notFound();
 
@@ -71,7 +73,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
     <main className="wrap" style={{ maxWidth: 1000 }}>
-      <div className="page-title"><div className="eyebrow">Profil professionnel · FACEAFRICA</div><TierBadge tier={p.membership_tier} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}</div>
+      <div className="page-title"><div className="eyebrow">Profil professionnel · FACEAFRICA</div><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}</div>
       {visiblePhotos.length ? <section aria-label="Portfolio photo" className="model-grid" style={{ marginBottom: 32, gridTemplateColumns: p.membership_tier === 'PRO' ? 'repeat(auto-fit, minmax(220px, 1fr))' : undefined }}>
         {visiblePhotos.map((photo, index) => <div className="portrait" key={photo.path} style={{ position: 'relative', overflow: 'hidden', minHeight: 300 }}>
           <Image src={photo.url} alt={`Photo ${index + 1} du portfolio de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
