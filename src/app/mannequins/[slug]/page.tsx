@@ -35,7 +35,7 @@ const measurementLabels: Record<string, string> = {
 
 function TierBadge({ tier }: { tier: PublicProfile['membership_tier'] }) {
   if (tier !== 'STANDARD' && tier !== 'PRO') return null;
-  return <span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>;
+  return <div className="tags"><span className="tag" style={{ display: 'inline-flex', background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Profil vérifié</span>{tier === 'PRO' && <span className="tag" style={{ display: 'inline-flex', background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
