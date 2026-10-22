@@ -17,6 +17,7 @@ type PublicProfile = {
   public_bio: string | null;
   measurements: Record<string, unknown> | null;
   main_photo_path: string | null;
+  
   portfolio_photo_paths: string[] | null;
   membership_tier: 'BASIC' | 'STANDARD' | 'PRO' | null;
 };
@@ -70,8 +71,8 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
     <main className="wrap" style={{ maxWidth: 1000 }}>
-      <div className="page-title"><div className="eyebrow">Profil professionnel · FACEAFRICA</div><TierBadge tier={p.membership_tier} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p></div>
-      {visiblePhotos.length ? <section aria-label="Portfolio photo" className="model-grid" style={{ marginBottom: 32 }}>
+      <div className="page-title"><div className="eyebrow">Profil professionnel · FACEAFRICA</div><TierBadge tier={p.membership_tier} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}</div>
+      {visiblePhotos.length ? <section aria-label="Portfolio photo" className="model-grid" style={{ marginBottom: 32, gridTemplateColumns: p.membership_tier === 'PRO' ? 'repeat(auto-fit, minmax(220px, 1fr))' : undefined }}>
         {visiblePhotos.map((photo, index) => <div className="portrait" key={photo.path} style={{ position: 'relative', overflow: 'hidden', minHeight: 300 }}>
           <Image src={photo.url} alt={`Photo ${index + 1} du portfolio de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
         </div>)}
