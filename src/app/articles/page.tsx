@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Link from 'next/link';
 import './articles.css';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
