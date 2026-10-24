@@ -25,7 +25,7 @@ function TierBadge({ tier, verified, featured }: { tier: Profile['membership_tie
   return <div className="tags">{tier !== 'BASIC' && tier && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>{tier === 'PRO' ? 'PRO' : 'STANDARD'}</span>}{verified && <span className="tag" style={{ background: '#e7f0ff', color: '#174ea6', border: '1px solid #b7d0ff', fontWeight: 700 }}>Mannequin Vérifié ✓</span>}{featured && <span className="tag" style={{ background: '#f3e8dd', color: '#573B2D', border: '1px solid #e3d2c3', fontWeight: 700 }}>À la une</span>}</div>;
 }
 
-export default async function ModelsPage({ searchParams }: { searchParams: Promise<{ q?: string; city?: string; specialty?: string; tier?: string; country?: string }> }) {
+export default async function ModelsPage({ searchParams }: { searchParams: Promise<{ q?: string; city?: string; specialty?: string; skill?: string; tier?: string; country?: string }> }) {
   const params = await searchParams;
   const client = createSupabasePublicClient();
   let profiles: DisplayProfile[] = [];
@@ -35,7 +35,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
   if (client) {
     let query = client
       .from('public_model_profiles')
-      .select('id,slug,display_name,city,country,specialties,main_photo_path,membership_tier,membership_sort_order,is_verified,is_featured')
+      .select('id,slug,display_name,city,country,specialties,secondary_skills,main_photo_path,membership_tier,membership_sort_order,is_verified,is_featured')
       .order('membership_sort_order', { ascending: true })
       .order('city', { ascending: true })
       .order('display_name', { ascending: true })
@@ -43,6 +43,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
     if (params.q) query = query.ilike('display_name', `%${params.q.replace(/[%_,]/g, '')}%`);
     if (params.city && params.city !== 'Toutes les villes') query = query.eq('city', params.city);
     if (params.specialty) query = query.contains('specialties', [params.specialty]);
+    if (params.skill) query = query.contains('secondary_skills', [params.skill]);
     if (params.tier && ['BASIC', 'STANDARD', 'PRO'].includes(params.tier)) query = query.eq('membership_tier', params.tier);
     if (params.country && params.country !== 'Tous les pays') query = query.eq('country', params.country);
 
@@ -67,6 +68,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
         <div className="field"><label htmlFor="q">Nom ou prénom</label><input id="q" name="q" defaultValue={params.q} placeholder="Rechercher un mannequin" /></div>
         <div className="field"><label htmlFor="city">Ville</label><select id="city" name="city" defaultValue={params.city || 'Toutes les villes'}><option value="Toutes les villes">Toutes les villes</option><option>Dakar</option><option>Thiès</option><option>Saint-Louis</option><option>Abidjan</option><option>Lomé</option><option>Cotonou</option><option>Bamako</option><option>Ouagadougou</option></select></div>
         <div className="field"><label htmlFor="specialty">Spécialité</label><select id="specialty" name="specialty" defaultValue={params.specialty || ''}><option value="">Toutes les spécialités</option><option>Mode</option><option>Éditorial</option><option>Commercial</option><option>Défilé</option><option>Beauté</option><option>Lifestyle</option></select></div>
+        <div className="field"><label htmlFor="skill">Compétence</label><select id="skill" name="skill" defaultValue={params.skill || ''}><option value="">Toutes les compétences</option><option>Acting</option><option>Création de Reels</option><option>TikTok</option><option>Défilé</option><option>Bilinguisme</option><option>Danse</option></select></div>
         <div className="field"><label htmlFor="country">Pays</label><select id="country" name="country" defaultValue={params.country || 'Tous les pays'}><option value="Tous les pays">Tous les pays</option><option>Sénégal</option><option>Côte d’Ivoire</option><option>Mali</option><option>Togo</option><option>Bénin</option><option>Burkina Faso</option></select></div>
         <div className="field"><label htmlFor="tier">Formule</label><select id="tier" name="tier" defaultValue={params.tier || ''}><option value="">Toutes les formules</option><option value="STANDARD">Standard</option><option value="PRO">Pro</option><option value="BASIC">Basic</option></select></div>
         <button className="button primary" type="submit">Rechercher</button>
