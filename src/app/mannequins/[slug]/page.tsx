@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createSupabasePublicClient } from '@/lib/supabase';
+import MediaKitButton from '@/components/MediaKitButton';
 
 type PublicProfile = {
   id: string;
@@ -17,7 +18,6 @@ type PublicProfile = {
   public_bio: string | null;
   measurements: Record<string, unknown> | null;
   main_photo_path: string | null;
-  
   portfolio_photo_paths: string[] | null;
   membership_tier: 'BASIC' | 'STANDARD' | 'PRO' | null;
   is_verified: boolean;
@@ -27,13 +27,15 @@ type PublicProfile = {
 const measurementLabels: Record<string, string> = {
   height: 'Taille',
   bust: 'Poitrine',
-  chest: 'Poitrine',
+  chest: 'Tour de poitrine',
   waist: 'Tour de taille',
   hips: 'Hanches',
   shoe_size: 'Pointure',
   clothing_size: 'Taille de vêtement',
   eye_color: 'Couleur des yeux',
   hair_color: 'Couleur des cheveux',
+  skin_tone: 'Teint',
+  hair_type: 'Type de cheveux',
 };
 
 function TierBadge({ tier, verified, featured }: { tier: PublicProfile['membership_tier']; verified: boolean; featured: boolean }) {
@@ -65,12 +67,23 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
     return { path, url: signed.signedUrl };
   }));
   const visiblePhotos = photos.filter((photo): photo is { path: string; url: string } => Boolean(photo));
-  // Privacy by default: measurements stay hidden until values and display permissions are validated.
+  const publicMeasurements = Object.entries(p.measurements || {}).filter(([key, value]) => key in measurementLabels && value !== null && value !== '');
+  // The public database view returns an empty object unless the mannequin opted in to showing measurements.
 
   return <>
-    <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
+    <style>{`@media print {
+      .no-print, .topbar, .footer { display: none !important; }
+      body { background: #fff !important; color: #111 !important; }
+      main.wrap { max-width: 100% !important; padding: 0 !important; }
+      .page-title { margin-top: 0 !important; }
+      .model-grid { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; }
+      .portrait { min-height: 180px !important; break-inside: avoid; }
+      .feature { break-inside: avoid; box-shadow: none !important; }
+      a { color: #111 !important; text-decoration: none !important; }
+    }`}</style>
+    <header className="topbar no-print"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
     <main className="wrap" style={{ maxWidth: 1000 }}>
-      <div className="page-title"><div className="eyebrow">Profil professionnel · FACEAFRICA</div><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}</div>
+      <div className="page-title"><div className="eyebrow">Smart Press Kit · FACEAFRICA</div><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}<div className="no-print" style={{ marginTop: 16 }}><MediaKitButton /></div></div>
       {visiblePhotos.length ? <section aria-label="Portfolio photo" className="model-grid" style={{ marginBottom: 32, gridTemplateColumns: p.membership_tier === 'PRO' ? 'repeat(auto-fit, minmax(220px, 1fr))' : undefined }}>
         {visiblePhotos.map((photo, index) => <div className="portrait" key={photo.path} style={{ position: 'relative', overflow: 'hidden', minHeight: 300 }}>
           <Image src={photo.url} alt={`Photo ${index + 1} du portfolio de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
@@ -82,10 +95,11 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
         {p.languages?.length ? <><h3>Langues</h3><p>{p.languages.join(', ')}</p></> : null}
         {p.availability && <><h3>Disponibilité</h3><p>{p.availability}</p></>}
         {p.agency_name && <><h3>Représentation</h3><p>{p.agency_name}</p></>}
-        <p className="notice">Pour contacter ce mannequin, passez par FACEAFRICA. Les coordonnées personnelles ne sont pas affichées publiquement.</p>
-        <Link className="button primary" href={`/shooting-photo?model=${encodeURIComponent(p.display_name)}`}>Contacter via FACEAFRICA</Link>
+        {publicMeasurements.length > 0 && <><h3>Mensurations et caractéristiques</h3><dl className="measurement-list">{publicMeasurements.map(([key, value]) => <div key={key} style={{ display: 'flex', gap: 8, marginBottom: 6 }}><dt style={{ fontWeight: 600 }}>{measurementLabels[key]} :</dt><dd>{String(value)}</dd></div>)}</dl></>}
+        <p className="notice no-print">Pour contacter ce mannequin, passez par FACEAFRICA. Les coordonnées personnelles ne sont pas affichées publiquement.</p>
+        <Link className="button primary no-print" href={`/shooting-photo?model=${encodeURIComponent(p.display_name)}`}>Contacter via FACEAFRICA</Link>
       </section>
     </main>
-    <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/mannequins">Retour au catalogue</Link></div></footer>
+    <footer className="footer no-print"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/mannequins">Retour au catalogue</Link></div></footer>
   </>;
 }
