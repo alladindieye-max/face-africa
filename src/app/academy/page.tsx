@@ -60,6 +60,12 @@ export default function AcademyPage() {
           </div>
         </article>)}
       </section>
+      <section className="feature" style={{ marginTop: 28, marginBottom: 28 }}>
+        <h2>Bibliothèque vidéo</h2>
+        <p>Retrouve les vidéos FACEAFRICA déjà publiées : portraits, conseils et coulisses. Les nouvelles formations seront ajoutées au fur et à mesure de leur validation.</p>
+        <Link className="button primary" href="/videos">Voir les vidéos disponibles ↗</Link>
+        <Link className="button" href="/articles" style={{ marginLeft: 8 }}>Lire les articles</Link>
+      </section>
       <section className="feature" style={{ marginTop: 32 }}>
         <h2>Ateliers et masterclasses à Dakar</h2>
         <p>Les prochaines sessions physiques de coaching de marche, de préparation au casting et de création de contenu seront annoncées ici.</p>
