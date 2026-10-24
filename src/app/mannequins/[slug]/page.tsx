@@ -11,6 +11,8 @@ type PublicProfile = {
   city: string;
   country: string;
   specialties: string[] | null;
+  secondary_skills: string[] | null;
+  social_metrics: Record<string, unknown> | null;
   experience: string | null;
   languages: string[] | null;
   availability: string | null;
@@ -54,7 +56,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
-    .select('id,slug,display_name,city,country,specialties,experience,languages,availability,agency_name,public_bio,measurements,main_photo_path,portfolio_photo_paths,membership_tier,is_verified,is_featured')
+    .select('id,slug,display_name,city,country,specialties,secondary_skills,social_metrics,experience,languages,availability,agency_name,public_bio,measurements,main_photo_path,portfolio_photo_paths,membership_tier,is_verified,is_featured')
     .eq('slug', slug).maybeSingle();
   if (error || !data) notFound();
 
@@ -91,7 +93,9 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
       </section> : <section className="empty"><h3>Portfolio en préparation</h3><p className="muted">Aucune photo approuvée n’est disponible pour le moment. Les photos privées ou en attente de validation ne sont jamais affichées.</p></section>}
       <section className="feature">
         {(p.public_bio || (p.specialties || []).length > 0) && <><h2>À propos</h2>{p.public_bio && <p>{p.public_bio}</p>}{(p.specialties || []).length > 0 && <><h3>Spécialités</h3><div className="tags">{p.specialties?.map((s) => <span className="tag" key={s}>{s}</span>)}</div></>}</>}
-        {p.experience && <><h3>Expérience</h3><p>{p.experience}</p></>}
+        {(p.secondary_skills || []).length > 0 && <><h3>Compétences complémentaires</h3><div className="tags">{p.secondary_skills?.map((skill) => <span className="tag" key={skill}>{skill}</span>)}</div></>}
+        {p.social_metrics && Object.keys(p.social_metrics).some((key) => ['instagram_followers', 'instagram_engagement', 'tiktok_followers', 'tiktok_engagement'].includes(key) && p.social_metrics?.[key] !== null && p.social_metrics?.[key] !== '') && <><h3>Audience sociale déclarée</h3><dl>{([['instagram_followers', 'Abonnés Instagram'], ['instagram_engagement', 'Engagement Instagram'], ['tiktok_followers', 'Abonnés TikTok'], ['tiktok_engagement', 'Engagement TikTok']] as const).map(([key, label]) => { const value = p.social_metrics?.[key]; return value === null || value === undefined || value === '' ? null : <div key={key} style={{ display: 'flex', gap: 8, marginBottom: 6 }}><dt style={{ fontWeight: 600 }}>{label} :</dt><dd>{String(value)}</dd></div>; })}</dl><p className="muted"><small>Statistiques déclarées par le profil, non vérifiées par FACEAFRICA.</small></p></>}
+        {p.experience && <><h3>Expérience</h3><p>{p.experience}</p></>
         {p.languages?.length ? <><h3>Langues</h3><p>{p.languages.join(', ')}</p></> : null}
         {p.availability && <><h3>Disponibilité</h3><p>{p.availability}</p></>}
         {p.agency_name && <><h3>Représentation</h3><p>{p.agency_name}</p></>}
