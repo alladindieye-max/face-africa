@@ -6,7 +6,8 @@ create policy "model owner updates own profile details" on public.model_profiles
   using (user_id = auth.uid() or public.is_app_admin())
   with check (user_id = auth.uid() or public.is_app_admin());
 
-create or replace view public.public_model_profiles with (security_invoker = false) as
+drop view if exists public.public_model_profiles;
+create view public.public_model_profiles with (security_invoker = false) as
 select
   m.id,
   m.slug,
