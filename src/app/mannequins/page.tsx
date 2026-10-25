@@ -8,7 +8,7 @@ type Profile = {
   id: string;
   slug: string;
   display_name: string;
-  city: string;
+  city: string | null;
   country: string;
   specialties: string[] | null;
   main_photo_path: string | null;
@@ -95,7 +95,7 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
             {p.photoUrl ? <Image src={p.photoUrl} alt={`Portrait de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized />
               : <div className="empty"><p>{p.main_photo_path ? 'Photo momentanément indisponible' : 'Photo non encore validée'}</p></div>}
           </div>
-          <div className="model-info"><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h3>{p.display_name}</h3><p>{p.city}, {p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
+          <div className="model-info"><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h3>{p.display_name}</h3><p>{p.city ? `${p.city}, ` : ''}{p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
         </article>)}</div>}
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><small>© FACEAFRICA · Catalogue professionnel</small><Link href="/">Retour à l’accueil</Link></div></footer>
