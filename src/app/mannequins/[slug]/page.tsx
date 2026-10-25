@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import { createSupabasePublicClient } from '@/lib/supabase';
 import MediaKitButton from '@/components/MediaKitButton';
 
@@ -77,6 +77,8 @@ function DemoModelProfile({ profile }: { profile: NonNullable<typeof demoProfile
 
 export default async function ModelProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  // Keep the common misspelled link working and send visitors to Nadia's canonical demo profile.
+  if (slug === 'adia-oyate') redirect('/mannequins/nadia-kouyate');
   const demoProfile = demoProfiles[slug];
   const client = createSupabasePublicClient();
   if (demoProfile) return <DemoModelProfile profile={demoProfile} />;
