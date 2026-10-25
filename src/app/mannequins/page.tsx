@@ -51,12 +51,12 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
     if (result.error) {
       error = true;
     } else {
-      profiles = await Promise.all(((result.data || []) as Profile[]).map(async (profile) => {
+      profiles = (await Promise.all(((result.data || []) as Profile[]).map(async (profile) => {
         if (!profile.main_photo_path) return { ...profile, photoUrl: null };
         // The bucket stays private; signed URLs are short-lived and only generated for approved paths.
         const { data, error: signingError } = await client.storage.from('model-photos').createSignedUrl(profile.main_photo_path, 15 * 60);
         return { ...profile, photoUrl: !signingError ? data?.signedUrl ?? null : null };
-      })).sort((a, b) => {
+      }))).sort((a, b) => {
         // L'ordre des formules est imposé ici, indépendamment des valeurs en base :
         // PRO d'abord, puis STANDARD, puis BASIC. Les autres critères départagent
         // les profils d'une même formule sans mélanger les niveaux.
