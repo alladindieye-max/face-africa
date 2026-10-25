@@ -50,9 +50,34 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   return { title: `Profil de mannequin — ${slug.replaceAll('-', ' ')}` };
 }
 
+
+const demoProfiles: Record<string, {
+  display_name: string; city: string; country: string; tier: 'STANDARD' | 'PRO';
+  photo: string; bio: string; specialties: string[]; languages: string[]; skills: string[];
+}> = {
+  'nadia-kouyate': { display_name: 'Nadia Kouyaté', city: 'Bamako', country: 'Mali', tier: 'PRO', photo: 'https://images.pexels.com/photos/20611277/pexels-photo-20611277/free-photo-of-african-woman-posing-in-a-studio.jpeg?auto=compress&cs=tinysrgb&w=900', bio: 'Une présence expressive et une sensibilité artistique pour les projets beauté et les éditoriaux.', specialties: ['Beauté', 'Éditorial', 'Mode'], languages: ['Français', 'Bambara', 'Anglais'], skills: ['Pose éditoriale', 'Beauté', 'Mode'] },
+  'fatou-bamba': { display_name: 'Fatou Bamba', city: 'Lomé', country: 'Togo', tier: 'PRO', photo: 'https://images.pexels.com/photos/35073808/pexels-photo-35073808/free-photo-of-indoor-photoshoot-with-african-model-in-abuja-studio.jpeg?auto=compress&cs=tinysrgb&w=900', bio: 'Un style raffiné et contemporain, adapté aux campagnes beauté et aux univers éditoriaux.', specialties: ['Beauté', 'Éditorial', 'Mode'], languages: ['Français', 'Mina', 'Anglais'], skills: ['Beauté', 'Éditorial', 'Mode'] },
+  'aissatou-diallo': { display_name: 'Aïssatou Diallo', city: 'Dakar', country: 'Sénégal', tier: 'STANDARD', photo: 'https://images.pexels.com/photos/28649427/pexels-photo-28649427/free-photo-of-stylish-african-fashion-portrait-in-studio.jpeg?auto=compress&cs=tinysrgb&w=900', bio: 'Un univers élégant et naturel, pensé pour la mode, la beauté et les campagnes lifestyle.', specialties: ['Mode', 'Beauté', 'Lifestyle'], languages: ['Français', 'Wolof', 'Anglais'], skills: ['Mode', 'Beauté', 'Lifestyle'] },
+  'mamadou-traore': { display_name: 'Mamadou Traoré', city: 'Abidjan', country: 'Côte d’Ivoire', tier: 'STANDARD', photo: 'https://images.pexels.com/photos/33246247/pexels-photo-33246247.jpeg?auto=compress&cs=tinysrgb&w=900', bio: 'Un style polyvalent pour les éditoriaux mode, les campagnes publicitaires et les portraits.', specialties: ['Mode masculine', 'Publicité', 'Éditorial'], languages: ['Français', 'Anglais'], skills: ['Mode masculine', 'Publicité', 'Portrait'] },
+  'ibrahim-diarra': { display_name: 'Ibrahim Diarra', city: 'Ouagadougou', country: 'Burkina Faso', tier: 'STANDARD', photo: 'https://images.pexels.com/photos/18870800/pexels-photo-18870800.jpeg?auto=compress&cs=tinysrgb&w=900', bio: 'Une allure dynamique pour les campagnes lifestyle, sport et mode urbaine.', specialties: ['Sport', 'Lifestyle', 'Mode urbaine'], languages: ['Français', 'Mooré', 'Anglais'], skills: ['Sport', 'Lifestyle', 'Mode urbaine'] }
+};
+
+function DemoModelProfile({ profile }: { profile: NonNullable<typeof demoProfiles[string]> }) {
+  const measurementItems = ['Taille', 'Poitrine', 'Tour de taille', 'Hanches', 'Pointure', 'Taille de vêtement', 'Couleur des yeux', 'Couleur des cheveux'];
+  return <>
+    <header className="topbar no-print"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
+    <main className="wrap" style={{ maxWidth: 1000 }}>
+      <div className="page-title"><div className="eyebrow">Fiche mannequin · Profil de démonstration</div><div className="tags"><span className="tag" style={{fontWeight:700}}>DÉMO</span><span className="tag" style={{fontWeight:700,background:profile.tier==='PRO'?'#f3e8dd':'#e7edf2'}}>{profile.tier}</span></div><h1>{profile.display_name}</h1><p className="lead">{profile.city}, {profile.country}</p><p className="notice">Profil fictif de démonstration. Les photos sont des illustrations ; aucune vérification, mensuration ou statistique sociale réelle n’est revendiquée.</p></div>
+      <section className="model-grid" style={{marginBottom:28,gridTemplateColumns:'repeat(auto-fit,minmax(240px,1fr))'}}><div className="portrait" style={{position:'relative',overflow:'hidden',minHeight:360}}><Image src={profile.photo} alt={`Portrait d’illustration de ${profile.display_name}`} fill sizes="(max-width:700px) 100vw, 50vw" style={{objectFit:'cover'}} unoptimized /></div><div className="feature"><h2>À propos</h2><p>{profile.bio}</p><h3>Spécialités</h3><div className="tags">{profile.specialties.map((item)=><span className="tag" key={item}>{item}</span>)}</div><h3>Compétences complémentaires</h3><div className="tags">{profile.skills.map((item)=><span className="tag" key={item}>{item}</span>)}</div><h3>Langues</h3><p>{profile.languages.join(', ')}</p><h3>Portfolio</h3><p>{profile.tier==='PRO'?'Formule PRO : capacité de portfolio prévue selon les conditions de l’offre.':'Formule STANDARD : capacité de portfolio prévue selon les conditions de l’offre.'} Cette fiche de démonstration ne représente pas un portfolio réel validé.</p><h3>Mensurations et caractéristiques</h3><p>À renseigner par le mannequin après inscription : {measurementItems.join(', ')}.</p><h3>Expérience et disponibilité</h3><p>À compléter avec les expériences, projets réalisés et disponibilités réelles après inscription.</p><h3>Réseaux sociaux</h3><p>Liens Instagram et TikTok à ajouter. Les abonnés et le taux d’engagement ne sont pas simulés.</p><h3>Contact</h3><p>Les demandes de projet seront accessibles via FACEAFRICA après activation des fonctions de contact.</p><Link className="button primary" href="/inscription">Créer un vrai profil ↗</Link></div></section>
+    </main><footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/mannequins">Retour au catalogue</Link></div></footer>
+  </>;
+}
+
 export default async function ModelProfilePage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
+  const demoProfile = demoProfiles[slug];
   const client = createSupabasePublicClient();
+  if (demoProfile) return <DemoModelProfile profile={demoProfile} />;
   if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
