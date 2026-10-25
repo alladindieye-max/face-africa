@@ -31,3 +31,31 @@
 .model-dashboard .model-info p{font-size:11px}
 .model-dashboard .tier-cta{width:100%;border:1px dashed #c87955;border-radius:9px;padding:12px;background:transparent;color:#a65b3a;font-weight:700}
 @media(max-width:760px){.model-dashboard .model-layout{grid-template-columns:1fr!important}.model-dashboard .feature{padding:16px}.model-dashboard h1{font-size:32px}.model-dashboard .model-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+/* Formules — présentation premium, lisible et responsive */
+.plans-section{background:#f7f4f1;padding-block:clamp(56px,8vw,100px)}
+.plans-intro{max-width:780px;margin:0 auto 42px;text-align:center}
+.plans-intro h2{font-family:var(--font-playfair),Georgia,serif;font-size:clamp(38px,6vw,64px);line-height:1.04;letter-spacing:-.045em;margin:18px 0}
+.plans-intro h2 em{font-style:normal;color:var(--clay)}
+.plans-intro>p{max-width:590px;margin:0 auto;color:var(--muted);line-height:1.8}
+.plans-grid-refined{align-items:stretch;gap:22px}
+.plans-grid-refined .plan-card{display:flex;flex-direction:column;min-width:0;padding:clamp(22px,2.8vw,32px);border:1px solid #e2d9d2;border-radius:20px;background:#fff;box-shadow:0 10px 35px #40271b08;transition:transform .2s ease,box-shadow .2s ease}
+.plans-grid-refined .plan-card:hover{transform:translateY(-4px);box-shadow:0 18px 44px #40271b12}
+.plan-topline{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:30px}
+.plan-topline .tag{font-size:10px;letter-spacing:.15em;text-transform:uppercase}
+.plan-popular{background:var(--clay);color:white;border-radius:999px;padding:7px 11px;font-size:10px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap}
+.plans-grid-refined .plan-card h3{font-family:var(--font-playfair),Georgia,serif;font-size:clamp(27px,3vw,34px);margin:24px 0 8px}
+.plans-grid-refined .plan-price{display:flex;align-items:baseline;flex-wrap:wrap;gap:9px;margin:0;color:var(--clay)}
+.plans-grid-refined .plan-price strong{font-family:var(--font-playfair),Georgia,serif;font-size:clamp(23px,2.5vw,30px);font-weight:600;letter-spacing:-.03em}
+.plans-grid-refined .plan-price>span{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.plan-description{color:var(--muted);line-height:1.7;font-size:14px;min-height:72px;margin:18px 0}
+.plan-benefits{list-style:none;padding:0;margin:0 0 28px;display:grid;gap:15px}
+.plan-benefits li{position:relative;padding-left:25px;color:#514640;font-size:14px;line-height:1.55}
+.plan-benefits li:before{content:"✓";position:absolute;left:0;top:0;color:var(--clay);font-weight:800}
+.plans-grid-refined .plan-button{margin-top:auto;display:flex;justify-content:center;align-items:center;gap:12px;min-height:50px;border-radius:999px;text-align:center}
+.plans-grid-refined .plan-featured{border:1.5px solid var(--clay);box-shadow:0 18px 45px #a65b3a15;position:relative}
+.plans-grid-refined .plan-featured .plan-button{box-shadow:0 8px 18px #a65b3a24}
+.plan-footnote{margin:12px 0 0;text-align:center;color:var(--muted);font-size:11px}
+.plans-disclaimer{max-width:850px;margin:25px auto 0;text-align:center;font-size:12px;line-height:1.7;color:var(--muted)}
+@media(max-width:850px){.plans-grid-refined{grid-template-columns:1fr!important;max-width:560px;margin-inline:auto}.plan-description{min-height:0}.plans-grid-refined .plan-card{padding:25px}.plans-intro{margin-bottom:30px}}
+@media(prefers-reduced-motion:reduce){.plans-grid-refined .plan-card{transition:none}.plans-grid-refined .plan-card:hover{transform:none}}
