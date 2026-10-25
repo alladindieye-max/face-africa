@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { createSupabasePublicClient } from '@/lib/supabase';
 
 export const metadata = {
   title: 'FACEAFRICA Academy',
@@ -32,7 +33,10 @@ const courses = [
   },
 ];
 
-export default function AcademyPage() {
+export default async function AcademyPage() {
+  const client = createSupabasePublicClient();
+  let articles: {id:string;title:string;slug:string;excerpt:string;cover_path:string|null;published_at:string|null}[] = [];
+  if (client) { const {data} = await client.from('articles').select('id,title,slug,excerpt,cover_path,published_at').eq('status','published').order('published_at',{ascending:false}).limit(6); articles = data || []; }
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><nav className="nav-links"><Link href="/mannequins">Mannequins</Link><Link href="/academy">Academy</Link><Link href="/shooting-photo">Prestations</Link></nav><Link className="button primary" href="/inscription">Rejoindre FACEAFRICA</Link></div></header>
     <main className="wrap">
@@ -40,6 +44,10 @@ export default function AcademyPage() {
         <div className="eyebrow">Apprendre · progresser · entreprendre</div>
         <h1>FACEAFRICA Academy</h1>
         <p className="lead">Des ressources pour développer tes compétences, protéger ton image et construire une activité professionnelle durable dans la mode et la création de contenu.</p>
+      </section>
+      <section className="section" style={{paddingTop:0}}>
+        <div className="results-line"><strong>Articles & conseils</strong><Link className="button" href="/articles">Tous les articles ↗</Link></div>
+        {articles.length ? <div className="model-grid">{articles.map(article => <article className="model-card" key={article.id}>{article.cover_path ? <img src={article.cover_path} alt={article.title} loading="lazy" style={{width:'100%',height:220,objectFit:'cover'}}/> : <div className="portrait" style={{minHeight:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20,background:'#f3e8dd'}}><span style={{color:'#573B2D',fontWeight:700}}>FACEAFRICA · CONSEILS</span></div>}<div className="model-info"><h3><Link href={'/articles/'+article.slug}>{article.title}</Link></h3><p>{article.excerpt}</p><Link className="button" href={'/articles/'+article.slug}>Lire l’article ↗</Link></div></article>)}</div> : <p className="muted">Les articles publiés apparaîtront ici.</p>}
       </section>
       <section className="feature" style={{ marginBottom: 28 }}>
         <h2>Apprendre à devenir un Modelpreneur</h2>
