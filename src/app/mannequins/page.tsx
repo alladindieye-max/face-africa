@@ -56,7 +56,20 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
         // The bucket stays private; signed URLs are short-lived and only generated for approved paths.
         const { data, error: signingError } = await client.storage.from('model-photos').createSignedUrl(profile.main_photo_path, 15 * 60);
         return { ...profile, photoUrl: !signingError ? data?.signedUrl ?? null : null };
-      }));
+      })).sort((a, b) => {
+        // L'ordre des formules est imposé ici, indépendamment des valeurs en base :
+        // PRO d'abord, puis STANDARD, puis BASIC. Les autres critères départagent
+        // les profils d'une même formule sans mélanger les niveaux.
+        const tierRank = (tier: Profile['membership_tier']) =>
+          tier === 'PRO' ? 0 : tier === 'STANDARD' ? 1 : 2;
+        const tierDifference = tierRank(a.membership_tier) - tierRank(b.membership_tier);
+        if (tierDifference !== 0) return tierDifference;
+        if (a.membership_sort_order !== b.membership_sort_order) {
+          return a.membership_sort_order - b.membership_sort_order;
+        }
+        if (a.is_featured !== b.is_featured) return a.is_featured ? -1 : 1;
+        return a.display_name.localeCompare(b.display_name, 'fr');
+      });
     }
   }
 
