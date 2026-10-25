@@ -8,7 +8,7 @@ type PublicProfile = {
   id: string;
   slug: string;
   display_name: string;
-  city: string;
+  city: string | null;
   country: string;
   specialties: string[] | null;
   secondary_skills: string[] | null;
@@ -121,7 +121,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
     }`}</style>
     <header className="topbar no-print"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link className="button" href="/mannequins">← Catalogue</Link></div></header>
     <main className="wrap" style={{ maxWidth: 1000 }}>
-      <div className="page-title"><div className="eyebrow">Smart Press Kit · FACEAFRICA</div><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h1>{p.display_name}</h1><p className="lead">{p.city}, {p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}<div className="no-print" style={{ marginTop: 16 }}><MediaKitButton /></div></div>
+      <div className="page-title"><div className="eyebrow">Smart Press Kit · FACEAFRICA</div><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h1>{p.display_name}</h1><p className="lead">{p.city ? `${p.city}, ` : ''}{p.country}</p>{p.membership_tier === 'PRO' && <p className="notice">Portfolio PRO · {visiblePhotos.length} photo(s) approuvée(s)</p>}<div className="no-print" style={{ marginTop: 16 }}><MediaKitButton /></div></div>
       {visiblePhotos.length ? <section aria-label="Portfolio photo" className="model-grid" style={{ marginBottom: 32, gridTemplateColumns: p.membership_tier === 'PRO' ? 'repeat(auto-fit, minmax(220px, 1fr))' : undefined }}>
         {visiblePhotos.map((photo, index) => <div className="portrait" key={photo.path} style={{ position: 'relative', overflow: 'hidden', minHeight: 300 }}>
           <Image src={photo.url} alt={`Photo ${index + 1} du portfolio de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, 50vw" style={{ objectFit: 'cover' }} unoptimized />
