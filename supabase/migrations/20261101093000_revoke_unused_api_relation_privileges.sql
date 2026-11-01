@@ -10,7 +10,7 @@ BEGIN
     FROM pg_class c
     JOIN pg_namespace n ON n.oid = c.relnamespace
     WHERE n.nspname = 'public'
-      AND c.relkind IN ('r', 'p', 'v', 'm', 'f')
+      AND c.relkind IN ('r', 'p')
   LOOP
     EXECUTE format(
       'REVOKE TRUNCATE, TRIGGER, REFERENCES ON TABLE %s FROM PUBLIC, anon, authenticated',
