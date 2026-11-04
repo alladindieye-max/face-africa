@@ -75,9 +75,9 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
 
   return <>
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><nav className="nav-links"><Link href="/">Accueil</Link><Link href="/mannequins">Mannequins</Link><Link href="/photographes">Nos Photographes</Link><Link href="/shooting-photo">Shooting</Link></nav><Link className="button primary" href="/inscription">Créer mon profil</Link></div></header>
-    <main id="contenu-principal" className="wrap">
-      <div className="page-title"><div className="eyebrow">Catalogue professionnel</div><h1>Découvrez les mannequins.</h1><p className="lead">Explorez les profils publiés et validés par FACEAFRICA. Les profils STANDARD et PRO sont présentés en priorité.</p></div>
-      <form className="search-panel" action="/mannequins">
+    <main id="contenu-principal" className="wrap catalogue-page">
+      <div className="page-title catalogue-heading"><div className="eyebrow">Catalogue professionnel</div><h1>Découvrez les mannequins.</h1><p className="lead">Explorez les profils publiés et validés par FACEAFRICA. Les profils STANDARD et PRO sont présentés en priorité.</p></div>
+      <form className="search-panel catalogue-filters" action="/mannequins">
         <div className="field"><label htmlFor="q">Nom ou prénom</label><input id="q" name="q" defaultValue={params.q} placeholder="Rechercher un mannequin" /></div>
         <div className="field"><label htmlFor="city">Ville</label><select id="city" name="city" defaultValue={params.city || 'Toutes les villes'}><option value="Toutes les villes">Toutes les villes</option><option>Dakar</option><option>Thiès</option><option>Saint-Louis</option><option>Abidjan</option><option>Lomé</option><option>Cotonou</option><option>Bamako</option><option>Ouagadougou</option></select></div>
         <div className="field"><label htmlFor="specialty">Spécialité</label><select id="specialty" name="specialty" defaultValue={params.specialty || ''}><option value="">Toutes les spécialités</option><option>Mode</option><option>Éditorial</option><option>Commercial</option><option>Défilé</option><option>Beauté</option><option>Lifestyle</option></select></div>
@@ -86,16 +86,16 @@ export default async function ModelsPage({ searchParams }: { searchParams: Promi
         <div className="field"><label htmlFor="tier">Formule</label><select id="tier" name="tier" defaultValue={params.tier || ''}><option value="">Toutes les formules</option><option value="STANDARD">Standard</option><option value="PRO">Pro</option><option value="BASIC">Basic</option></select></div>
         <button className="button primary" type="submit">Rechercher</button>
       </form>
-      <div className="results-line"><strong>{backendConfigured && !error ? `${profiles.length} profil(s) publié(s)` : 'Catalogue en préparation'}</strong><span className="muted">Seuls les profils publiés et validés sont affichés.</span></div>
+      <div className="results-line catalogue-results"><strong>{backendConfigured && !error ? `${profiles.length} profil(s) publié(s)` : 'Catalogue en préparation'}</strong><span className="muted">Seuls les profils publiés et validés sont affichés.</span></div>
       {!backendConfigured ? <div className="empty"><h3>Le catalogue est en cours de connexion.</h3><p className="muted">Configurez Supabase et appliquez les migrations pour afficher les profils réels. Aucun profil fictif n’est présenté comme un talent inscrit.</p></div>
         : error ? <div className="empty"><h3>Impossible de charger les profils.</h3><p className="muted">Vérifiez que les migrations du catalogue sont appliquées et réessayez.</p></div>
         : profiles.length === 0 ? <div className="empty"><h3>Aucun profil publié pour cette recherche.</h3><p className="muted">Essayez une autre ville ou retirez un filtre. Les profils en attente de validation restent privés.</p><Link className="button" href="/mannequins">Réinitialiser la recherche</Link></div>
-        : <div className="model-grid">{profiles.map((p) => <article className="model-card" key={p.id}>
-          <div className="portrait" style={{ position: 'relative', overflow: 'hidden' }}>
+        : <div className="model-grid catalogue-grid">{profiles.map((p) => <article className="model-card catalogue-card" key={p.id}>
+          <div className="portrait catalogue-portrait" style={{ position: 'relative', overflow: 'hidden' }}>
             {p.photoUrl ? <Image src={p.photoUrl} alt={`Portrait de ${p.display_name}`} fill sizes="(max-width: 700px) 100vw, (max-width: 1100px) 50vw, 33vw" style={{ objectFit: 'cover' }} unoptimized />
               : <div className="empty"><p>{p.main_photo_path ? 'Photo momentanément indisponible' : 'Photo non encore validée'}</p></div>}
           </div>
-          <div className="model-info"><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h3>{p.display_name}</h3><p>{p.city ? `${p.city}, ` : ''}{p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
+          <div className="model-info catalogue-info"><TierBadge tier={p.membership_tier} verified={p.is_verified} featured={p.is_featured} /><h3>{p.display_name}</h3><p>{p.city ? `${p.city}, ` : ''}{p.country}</p><div className="tags">{(p.specialties || []).slice(0, 3).map((s) => <span className="tag" key={s}>{s}</span>)}</div><Link className="button" href={`/mannequins/${p.slug}`}>Voir le profil</Link></div>
         </article>)}</div>}
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><small>© FACEAFRICA · Catalogue professionnel</small><Link href="/">Retour à l’accueil</Link></div></footer>
