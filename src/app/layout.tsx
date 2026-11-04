@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
-import { DM_Sans, Fraunces } from 'next/font/google';
+import { Jost, Playfair_Display } from 'next/font/google';
 import './globals.css';
 
-const dmSans = DM_Sans({ subsets: ['latin'], variable: '--font-dm-sans', display: 'swap' });
-const fraunces = Fraunces({ subsets: ['latin'], variable: '--font-fraunces', display: 'swap' });
+const jost = Jost({ subsets: ['latin'], variable: '--font-jost', display: 'swap' });
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair', display: 'swap' });
 
 export const metadata: Metadata = {
   title: { default: 'FACEAFRICA — Les visages qui façonnent la mode africaine', template: '%s | FACEAFRICA' },
@@ -14,5 +14,5 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: 'FACEAFRICA' },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={`${dmSans.variable} ${fraunces.variable}`}><a className="skip-link" href="#contenu-principal">Aller au contenu</a>{children}</body></html>;
+  return <html lang="fr"><body className={`${jost.variable} ${playfair.variable}`}><a className="skip-link" href="#contenu-principal">Aller au contenu</a>{children}</body></html>;
 }
