@@ -73,3 +73,33 @@
   --clay: #A65B3A;
   --sable: #E9DFD2;
 }
+
+
+/* Catalogue mannequins — identité éditoriale FACEAFRICA */
+.catalogue-page{padding-bottom:72px}
+.catalogue-heading{position:relative;margin:clamp(38px,6vw,72px) 0 30px;padding:clamp(28px,5vw,52px);border-radius:20px;overflow:hidden;background:linear-gradient(115deg,#241811 0%,#573b2d 62%,#a65b3a 100%);color:#fffaf4}
+.catalogue-heading:after{content:"FA";position:absolute;right:3%;bottom:-.42em;font-family:var(--font-playfair),Georgia,serif;font-size:clamp(150px,26vw,320px);line-height:1;color:#fff;opacity:.055;pointer-events:none}
+.catalogue-heading .eyebrow{color:#e6b69a;letter-spacing:.2em}
+.catalogue-heading h1{position:relative;z-index:1;color:#fffaf4;font-family:var(--font-playfair),Georgia,serif;font-size:clamp(38px,5.5vw,64px);line-height:1.04;letter-spacing:-.035em;margin:14px 0}
+.catalogue-heading .lead{position:relative;z-index:1;color:#f0ded2;max-width:690px;line-height:1.75}
+.catalogue-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding:22px;background:#fffaf4;border:1px solid #e8d9cc;border-radius:18px;box-shadow:0 14px 38px #40271b0c;margin:0 0 28px}
+.catalogue-filters .field{display:grid;gap:8px;min-width:0}
+.catalogue-filters .field label{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#806b5d}
+.catalogue-filters input,.catalogue-filters select{width:100%;min-height:46px;padding:10px 13px;border:1px solid #e3d2c3;border-radius:9px;background:#fff;color:#241811;font:inherit}
+.catalogue-filters input:focus,.catalogue-filters select:focus{outline:2px solid #c99a50;outline-offset:2px}
+.catalogue-filters>.button{align-self:end;min-height:46px}
+.catalogue-results{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:26px 0 18px;padding-bottom:14px;border-bottom:1px solid #e8d9cc}
+.catalogue-results strong{font-family:var(--font-playfair),Georgia,serif;font-size:22px;color:#573b2d}
+.catalogue-grid{align-items:stretch;gap:22px}
+.catalogue-card{overflow:hidden;border:1px solid #eadfd6;border-radius:16px;background:#fff;box-shadow:0 10px 28px #40271b0b;transition:transform .2s ease,box-shadow .2s ease}
+.catalogue-card:hover{transform:translateY(-4px);box-shadow:0 18px 40px #40271b16}
+.catalogue-portrait{height:clamp(250px,29vw,360px);background:#eee3d8}
+.catalogue-info{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:18px}
+.catalogue-info h3{font-family:var(--font-playfair),Georgia,serif;font-size:25px;line-height:1.15;margin:3px 0 0;color:#241811}
+.catalogue-info>p{margin:0;color:#806b5d;font-size:13px}
+.catalogue-info .tags{display:flex;flex-wrap:wrap;gap:6px}
+.catalogue-info .button{margin-top:8px;width:100%;justify-content:center;border-radius:999px;min-height:44px}
+.catalogue-page .empty{border:1px solid #eadfd6;border-radius:16px;background:#fffaf4;padding:30px}
+@media(max-width:800px){.catalogue-filters{grid-template-columns:repeat(2,minmax(0,1fr))}.catalogue-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.catalogue-heading{margin-top:28px;padding:26px 22px}.catalogue-filters{grid-template-columns:1fr;padding:16px}.catalogue-grid{grid-template-columns:1fr}.catalogue-portrait{height:340px}.catalogue-results{align-items:flex-start;flex-direction:column}.catalogue-info h3{font-size:23px}}
+@media(prefers-reduced-motion:reduce){.catalogue-card{transition:none}.catalogue-card:hover{transform:none}}
