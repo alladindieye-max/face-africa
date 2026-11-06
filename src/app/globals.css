@@ -127,3 +127,32 @@
 .castings-page .empty,.creative-directory-page .empty{padding:32px;border:1px solid #eadfd6;border-radius:16px;background:#fffaf4}
 @media(max-width:600px){.directory-heading,.castings-heading{margin-top:28px;padding:26px 22px}.creative-directory-card .portrait{height:320px}}
 @media(prefers-reduced-motion:reduce){.creative-directory-card{transition:none}.creative-directory-card:hover{transform:none}}
+
+
+/* Fiches mannequins — présentation éditoriale FACEAFRICA */
+.mannequin-profile-page{padding-bottom:48px}
+.mannequin-profile-page .profile-heading{position:relative;margin:clamp(34px,5vw,62px) 0 28px;padding:clamp(26px,4vw,44px);border-radius:20px;background:linear-gradient(115deg,#241811 0%,#573b2d 62%,#a65b3a 100%);color:#fffaf4;overflow:hidden}
+.mannequin-profile-page .profile-heading:after{content:"FA";position:absolute;right:3%;bottom:-.5em;font:clamp(150px,25vw,300px)/1 var(--font-playfair),Georgia,serif;color:#fff;opacity:.055;pointer-events:none}
+.mannequin-profile-page .profile-heading .eyebrow{color:#e6b69a;letter-spacing:.2em;position:relative;z-index:1}
+.mannequin-profile-page .profile-heading h1{position:relative;z-index:1;color:#fffaf4;font:600 clamp(38px,5vw,62px)/1.04 var(--font-playfair),Georgia,serif;letter-spacing:-.035em;margin:14px 0}
+.mannequin-profile-page .profile-heading .lead{position:relative;z-index:1;color:#f0ded2;margin:0}
+.mannequin-profile-page .profile-heading .tags,.mannequin-profile-page .profile-heading .notice{position:relative;z-index:1}
+.mannequin-profile-page .profile-heading .notice{color:#f0ded2}
+.mannequin-profile-page .profile-heading .button{position:relative;z-index:1;border-color:#f0ded2;color:#fffaf4}
+.mannequin-profile-page .profile-gallery{grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px}
+.mannequin-profile-page .profile-gallery .portrait{height:clamp(280px,34vw,440px);min-height:0;border-radius:14px;background:#e9dfd2;box-shadow:0 12px 30px #40271b12}
+.mannequin-profile-page .profile-gallery .portrait img{object-position:center top}
+.mannequin-profile-page .profile-details{padding:clamp(22px,4vw,38px);border:1px solid #eadfd6;border-radius:18px;background:#fffaf4;box-shadow:0 12px 34px #40271b0b}
+.mannequin-profile-page .profile-details h2{font:600 clamp(28px,3vw,36px)/1.1 var(--font-playfair),Georgia,serif;color:#573b2d;margin:0 0 14px}
+.mannequin-profile-page .profile-details h3{font:600 21px/1.2 var(--font-playfair),Georgia,serif;color:#573b2d;margin:26px 0 10px}
+.mannequin-profile-page .profile-details p{color:#655348;line-height:1.8}
+.mannequin-profile-page .profile-details .tags{gap:8px}
+.mannequin-profile-page .profile-details .tag{display:inline-flex;align-items:center;padding:8px 12px;border:1px solid #ead9ca;border-radius:999px;background:#f5eee7;color:#573b2d;text-decoration:none;font-weight:600}
+.mannequin-profile-page .measurement-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 22px;margin:14px 0}
+.mannequin-profile-page .measurement-list>div{padding:10px 12px;border:1px solid #eee2d7;border-radius:9px;background:white;margin:0!important}
+.mannequin-profile-page .measurement-list dt{color:#806b5d}
+.mannequin-profile-page .measurement-list dd{margin:0;color:#241811}
+.mannequin-profile-page .empty{background:#fffaf4;border:1px solid #eadfd6;border-radius:16px;padding:30px}
+.mannequin-profile-page .profile-details>.button{margin-top:12px;border-radius:999px}
+@media(max-width:600px){.mannequin-profile-page .profile-heading{margin-top:26px;padding:24px 20px}.mannequin-profile-page .profile-gallery{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.mannequin-profile-page .profile-gallery .portrait{height:260px}.mannequin-profile-page .measurement-list{grid-template-columns:1fr}.mannequin-profile-page .profile-details{padding:20px}}
+@media(prefers-reduced-motion:reduce){.mannequin-profile-page *{scroll-behavior:auto!important}}
