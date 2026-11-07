@@ -219,3 +219,47 @@
 .brands-page .button{border-radius:999px}
 @media(max-width:760px){.brands-hero{margin-top:28px;padding:30px 23px}.brands-intro{grid-template-columns:1fr;gap:12px}.brands-benefits{grid-template-columns:1fr}.brands-benefit{padding:24px}.brands-process{margin-top:42px;padding:24px 20px}.brands-process-action{align-items:stretch;flex-direction:column}.brands-process-action .button{width:100%}}
 @media(prefers-reduced-motion:reduce){.brands-page *{scroll-behavior:auto!important}}
+
+
+/* Ajustement accueil — portraits photographes compacts et homogènes */
+.home-photographer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;align-items:stretch;max-width:1120px;margin:0 auto}
+.home-photographer-card{display:flex;min-width:0;flex-direction:column;align-items:flex-start;gap:8px;padding:10px;text-align:left;text-decoration:none;color:inherit;background:#fffaf4;border:1px solid #eadfd6;border-radius:14px;box-shadow:0 7px 22px #40271b0a;transition:transform .22s ease,box-shadow .22s ease}
+.home-photographer-card:hover{transform:translateY(-4px);box-shadow:0 14px 30px #40271b18}
+.home-photographer-avatar{display:grid;place-items:center;width:100%;height:150px;overflow:hidden;background:linear-gradient(145deg,#f0dfd1,#d7b49c);border-radius:9px}
+.home-photographer-card strong{font-family:var(--font-playfair),Georgia,serif;font-size:17px;line-height:1.25}
+.home-photographer-card>span:last-child{margin-top:auto}
+@media(max-width:650px){.home-photographer-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.home-photographer-avatar{height:125px}.home-photographer-card{padding:8px}}
+
+/* Espace Marques — direction artistique fashion éditoriale */
+.brands-page-editorial{padding-bottom:90px}
+.brands-hero-visual{isolation:isolate;min-height:610px;display:flex;align-items:center;background:#211711;position:relative;overflow:hidden}
+.brands-hero-image{position:absolute;z-index:-2;inset:0;background-image:linear-gradient(90deg,rgba(22,13,9,.94) 0%,rgba(35,20,14,.82) 46%,rgba(35,20,14,.12) 100%),url("https://images.pexels.com/photos/28649427/pexels-photo-28649427/free-photo-of-stylish-african-fashion-portrait-in-studio.jpeg?auto=compress&cs=tinysrgb&w=1800");background-size:cover;background-position:center 32%;transform:scale(1.015);animation:brandsHeroDrift 18s ease-in-out infinite alternate}
+.brands-hero-content{position:relative;z-index:1;max-width:720px}
+.brands-hero-visual h1 em,.brands-editorial-intro h2 em,.brands-opportunities h2 em{color:#e5b17e;font-style:italic}
+.brands-hero-visual .lead{max-width:610px}
+.brands-hero-stamp{position:absolute;right:5%;bottom:8%;font:700 13px/1.6 var(--font-jost),sans-serif;letter-spacing:.22em;color:#fff;border:1px solid #ffffff90;border-radius:50%;width:132px;height:132px;display:grid;place-content:center;text-align:center;transform:rotate(12deg);animation:brandsStampFloat 5s ease-in-out infinite}
+.brands-editorial-intro{display:grid;grid-template-columns:1.1fr .7fr;gap:50px;align-items:end;margin:76px 0 28px}
+.brands-editorial-intro h2,.brands-opportunities h2{font:600 clamp(34px,5vw,58px)/1.04 var(--font-playfair),Georgia,serif;color:#573b2d;letter-spacing:-.035em;margin:14px 0}
+.brands-editorial-intro h2 em,.brands-opportunities h2 em{color:#a65b3a}
+.brands-editorial-intro>p,.brands-opportunities p{color:#756255;line-height:1.85;margin:0 0 8px}
+.brands-editorial-grid{display:grid;grid-template-columns:1.15fr .85fr;grid-template-rows:260px 260px;gap:16px}
+.brand-editorial-card{position:relative;isolation:isolate;display:flex;flex-direction:column;justify-content:flex-end;min-width:0;overflow:hidden;padding:26px;border-radius:17px;background-size:cover;background-position:center 35%;color:#fff;text-decoration:none;transition:transform .28s ease,filter .28s ease}
+.brand-editorial-card:before{content:"";position:absolute;z-index:-1;inset:0;background:inherit;background-size:cover;background-position:center;transition:transform .65s cubic-bezier(.2,.7,.2,1)}
+.brand-editorial-card:hover:before{transform:scale(1.06)}
+.brand-editorial-card:hover{filter:saturate(1.08)}
+.brand-editorial-card.brand-editorial-tall{grid-row:span 2}
+.brand-editorial-card>span{font-size:10px;font-weight:800;letter-spacing:.19em;color:#f2c99f}
+.brand-editorial-card h3{max-width:460px;margin:12px 0 0;color:#fff;font:600 clamp(23px,3vw,36px)/1.08 var(--font-playfair),Georgia,serif}
+.brand-editorial-card>b{position:absolute;right:24px;bottom:24px;font-size:22px}
+.brands-benefit-section{margin-top:82px}
+.brands-benefit-section>h2{font:600 clamp(34px,4.5vw,52px)/1.08 var(--font-playfair),Georgia,serif;color:#573b2d;margin:12px 0 26px}
+.brands-opportunities{display:flex;align-items:end;justify-content:space-between;gap:30px;margin-top:76px;padding:clamp(26px,5vw,48px);border-radius:20px;background:#211711;color:#fff}
+.brands-opportunities>div{max-width:670px}
+.brands-opportunities h2{color:#fff}
+.brands-opportunities p{color:#e4d3c7}
+.brands-opportunities .button{flex-shrink:0}
+.brands-process{margin-top:28px}
+@keyframes brandsHeroDrift{from{transform:scale(1.015) translateX(0)}to{transform:scale(1.08) translateX(-1.2%)}}
+@keyframes brandsStampFloat{0%,100%{translate:0 0;rotate:0deg}50%{translate:0 -9px;rotate:5deg}}
+@media(max-width:760px){.brands-hero-visual{min-height:570px;padding:28px 22px}.brands-hero-image{background-position:60% center;background-image:linear-gradient(90deg,rgba(22,13,9,.88),rgba(22,13,9,.48)),url("https://images.pexels.com/photos/28649427/pexels-photo-28649427/free-photo-of-stylish-african-fashion-portrait-in-studio.jpeg?auto=compress&cs=tinysrgb&w=1200")}.brands-hero-stamp{width:94px;height:94px;font-size:9px;right:18px;bottom:18px}.brands-editorial-intro{grid-template-columns:1fr;gap:12px;margin:52px 0 22px}.brands-editorial-grid{grid-template-columns:1fr 1fr;grid-template-rows:300px 220px;gap:10px}.brand-editorial-card{padding:16px}.brand-editorial-card.brand-editorial-tall{grid-row:span 2}.brand-editorial-card h3{font-size:22px}.brands-benefit-section{margin-top:54px}.brands-opportunities{align-items:stretch;flex-direction:column;margin-top:54px}.brands-opportunities .button{width:100%;justify-content:center}}
+@media(prefers-reduced-motion:reduce){.brands-hero-image,.brands-hero-stamp,.brand-editorial-card,.brand-editorial-card:before,.home-photographer-card{animation:none;transition:none}.brand-editorial-card:hover:before,.home-photographer-card:hover{transform:none}}
