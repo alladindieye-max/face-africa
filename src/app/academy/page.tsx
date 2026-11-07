@@ -38,7 +38,7 @@ export default async function AcademyPage() {
   let articles: {id:string;title:string;slug:string;excerpt:string;cover_path:string|null;published_at:string|null}[] = [];
   if (client) { const {data} = await client.from('articles').select('id,title,slug,excerpt,cover_path,published_at').eq('status','published').order('published_at',{ascending:false}).limit(6); articles = data || []; }
   return <>
-    <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><nav className="nav-links"><Link href="/mannequins">Mannequins</Link><Link href="/academy">Academy</Link><Link href="/shooting-photo">Prestations</Link></nav><Link className="button primary" href="/inscription">Rejoindre FACEAFRICA</Link></div></header>
+    <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><nav className="nav-links"><Link href="/mannequins">Mannequins</Link><Link href="/academy">Academy</Link><Link href="/marques">Marques</Link><Link href="/shooting-photo">Prestations</Link></nav><Link className="button primary" href="/inscription">Rejoindre FACEAFRICA</Link></div></header>
     <main className="wrap academy-page">
       <section className="page-title academy-heading">
         <div className="eyebrow">Apprendre · progresser · entreprendre</div>
