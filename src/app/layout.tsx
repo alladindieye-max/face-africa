@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Jost, Playfair_Display } from 'next/font/google';
+import MobileAppNav from '@/components/MobileAppNav';
 import './globals.css';
 
 const jost = Jost({ subsets: ['latin'], variable: '--font-jost', display: 'swap' });
@@ -14,5 +15,5 @@ export const metadata: Metadata = {
   appleWebApp: { capable: true, title: 'FACEAFRICA' },
 };
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="fr"><body className={`${jost.variable} ${playfair.variable}`}><a className="skip-link" href="#contenu-principal">Aller au contenu</a>{children}</body></html>;
+  return <html lang="fr"><body className={`${jost.variable} ${playfair.variable}`}><a className="skip-link" href="#contenu-principal">Aller au contenu</a>{children}<MobileAppNav /></body></html>;
 }
