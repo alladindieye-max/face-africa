@@ -88,7 +88,7 @@ export default async function ModelProfilePage({ params }: { params: Promise<{ s
   if (legacyDemoSlugs[slug]) redirect(`/mannequins/${legacyDemoSlugs[slug]}`);
   const demoProfile = demoProfiles[slug];
   const client = createSupabasePublicClient();
-  if (demoProfile) return <DemoModelProfile profile={demoProfile} />;
+  if (demoProfile) notFound();
   if (!client) return <main id="contenu-principal" className="wrap"><div className="page-title"><div className="eyebrow">Profil professionnel</div><h1>Le profil sera bientôt disponible.</h1><p className="lead">Le catalogue public n’est pas encore connecté à la base de données.</p><Link className="button" href="/mannequins">Retour au catalogue</Link></div></main>;
 
   const { data, error } = await client.from('public_model_profiles')
