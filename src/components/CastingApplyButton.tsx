@@ -37,20 +37,33 @@ export default function CastingApplyButton({ castingId, isDemo = false, allowDem
       model_profile_id: profile.id,
       status: 'submitted'
     });
-    setBusy(false);
     if (error?.code === '23505') {
+      setBusy(false);
       setKind('info'); setMessage('Vous avez déjà envoyé une candidature pour ce casting.');
       return;
     }
     if (error) {
+      setBusy(false);
       setKind('error');
       setMessage(error.code === '42501'
         ? 'Ce casting n’accepte plus de candidatures ou votre profil ne remplit pas les conditions.'
         : 'Votre candidature n’a pas pu être enregistrée. Réessayez dans quelques instants.');
       return;
     }
+
+    // The application is already safely stored. Email delivery is a separate notification step.
+    const { error: emailError } = await client.functions.invoke('casting-application-confirmation', {
+      body: { castingId },
+    });
+    setBusy(false);
+    if (emailError) {
+      console.error('casting_application_confirmation_unavailable', emailError.message);
+      setKind('success');
+      setMessage('Votre candidature a bien été enregistrée. Retrouvez son suivi dans votre espace mannequin. L’e-mail de confirmation n’a pas pu être envoyé pour le moment.');
+      return;
+    }
     setKind('success');
-    setMessage('Votre candidature a bien été enregistrée. Retrouvez son suivi dans votre espace mannequin.');
+    setMessage('Votre candidature a bien été enregistrée. Un e-mail de confirmation vous a été envoyé. Retrouvez aussi son suivi dans votre espace mannequin.');
   }
 
   return <div className="feature" style={{display:'grid',gap:12}}>
