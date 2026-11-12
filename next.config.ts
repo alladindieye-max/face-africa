@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
   images: {
     remotePatterns: [{ protocol: 'https', hostname: '*.supabase.co' }],
   },
+  async redirects() { return [{ source: '/shooting-photo', destination: '/shooting', permanent: true }]; },
   async headers() {
     return [
       {
