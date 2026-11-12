@@ -4,12 +4,13 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
-export default function CastingApplyButton({ castingId }: { castingId: string }) {
+export default function CastingApplyButton({ castingId, isDemo = false }: { castingId: string; isDemo?: boolean }) {
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState('');
   const [kind, setKind] = useState<'success'|'error'|'info'>('info');
 
   async function apply() {
+    if (isDemo) { setKind('info'); setMessage('Ceci est un casting de démonstration : aucune candidature réelle ne sera enregistrée.'); return; }
     const client = createSupabaseBrowserClient();
     if (!client) { setKind('error'); setMessage('Le service de candidature est momentanément indisponible. Réessayez plus tard.'); return; }
     setBusy(true); setMessage('');
@@ -53,8 +54,8 @@ export default function CastingApplyButton({ castingId }: { castingId: string })
   }
 
   return <div className="feature" style={{display:'grid',gap:12}}>
-    <button className="button primary" type="button" onClick={() => void apply()} disabled={busy}>
-      {busy ? 'Envoi en cours…' : 'Postuler gratuitement'}
+    <button className="button primary" type="button" onClick={() => void apply()} disabled={busy || isDemo}>
+      {isDemo ? 'Candidature désactivée (démo)' : busy ? 'Envoi en cours…' : 'Postuler gratuitement'}
     </button>
     {message && <p role={kind==='error'?'alert':'status'} aria-live="polite" className="notice">{message} {message.includes('Connectez-vous') && <Link href="/connexion?next=%2Fcastings">Se connecter</Link>} {message.includes('Ouvrez votre espace') && <Link href="/espace">Mon espace</Link>}</p>}
     <p className="muted">La candidature est gratuite. Votre profil doit être publié et validé par FACEAFRICA.</p>
