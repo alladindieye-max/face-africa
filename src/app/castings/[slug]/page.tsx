@@ -59,7 +59,7 @@ export default async function CastingDetailPage({ params }: { params: Promise<{ 
         {eventStart && <p><strong>Date prévue :</strong> {eventStart}{eventEnd && eventEnd !== eventStart ? ' – '+eventEnd : ''}</p>}
         {deadline && <p><strong>Date limite de candidature :</strong> {deadline}</p>}
       </section>
-      <section style={{margin:'24px 0'}}><CastingApplyButton castingId={casting.id} isDemo={casting.is_demo}/></section>
+      <section style={{margin:'24px 0'}}><CastingApplyButton castingId={casting.id} isDemo={casting.is_demo} allowDemoTest={process.env.VERCEL_ENV === 'preview'}/></section>
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/castings">Retour aux castings</Link></div></footer>
   </>;
