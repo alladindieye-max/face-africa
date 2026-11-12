@@ -10,7 +10,7 @@ type Casting = {
   description: string; city: string; country: string; location: string | null;
   casting_type: string; desired_profiles: string[] | null; selection_criteria: string | null;
   participation_terms: string | null; compensation_description: string | null;
-  deadline_at: string | null; event_start_at: string | null; event_end_at: string | null;
+  deadline_at: string | null; event_start_at: string | null; event_end_at: string | null; is_demo: boolean;
 };
 
 function dateLabel(value: string | null) {
@@ -30,8 +30,8 @@ export default async function CastingDetailPage({ params }: { params: Promise<{ 
   if (!client) notFound();
   const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(slug);
   const query = client.from('castings')
-    .select('id,slug,title,cover_storage_path,description,city,country,location,casting_type,desired_profiles,selection_criteria,participation_terms,compensation_description,deadline_at,event_start_at,event_end_at')
-    .eq('status', 'published').eq('is_demo', false)
+    .select('id,slug,title,cover_storage_path,description,city,country,location,casting_type,desired_profiles,selection_criteria,participation_terms,compensation_description,deadline_at,event_start_at,event_end_at,is_demo')
+    .eq('status', 'published').or(process.env.VERCEL_ENV === 'preview' ? 'is_demo.eq.false,is_demo.eq.true' : 'is_demo.eq.false')
     .or(isUuid ? `slug.eq.${slug},id.eq.${slug}` : `slug.eq.${slug}`)
     .maybeSingle();
   const { data, error } = await query;
@@ -45,7 +45,7 @@ export default async function CastingDetailPage({ params }: { params: Promise<{ 
     <header className="topbar"><div className="wrap nav"><Link href="/" className="brand"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link><Link href="/castings" className="button">← Tous les castings</Link></div></header>
     <main id="contenu-principal" className="wrap" style={{maxWidth:900}}>
       <section className="page-title">
-        <div className="eyebrow">Casting vérifié · {casting.casting_type}</div>
+        <div className="eyebrow">{casting.is_demo ? 'DÉMO · TEST TECHNIQUE' : 'Casting vérifié'} · {casting.casting_type}</div>
         <h1>{casting.title}</h1>
         <p className="lead">{casting.city}, {casting.country}{casting.location ? ' · '+casting.location : ''}</p>
         <div className="tags"><span className="tag">{casting.casting_type}</span>{deadline && <span className="tag">Clôture : {deadline}</span>}</div>
@@ -59,7 +59,7 @@ export default async function CastingDetailPage({ params }: { params: Promise<{ 
         {eventStart && <p><strong>Date prévue :</strong> {eventStart}{eventEnd && eventEnd !== eventStart ? ' – '+eventEnd : ''}</p>}
         {deadline && <p><strong>Date limite de candidature :</strong> {deadline}</p>}
       </section>
-      <section style={{margin:'24px 0'}}><CastingApplyButton castingId={casting.id}/></section>
+      <section style={{margin:'24px 0'}}><CastingApplyButton castingId={casting.id} isDemo={casting.is_demo}/></section>
     </main>
     <footer className="footer"><div className="wrap footer-inner"><strong>FACEAFRICA</strong><Link href="/castings">Retour aux castings</Link></div></footer>
   </>;
