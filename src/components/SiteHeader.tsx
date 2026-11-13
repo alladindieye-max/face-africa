@@ -8,6 +8,7 @@ import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 export default function SiteHeader() {
   const [user, setUser] = useState<User | null>(null);
   const [displayName, setDisplayName] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const [ready, setReady] = useState(false);
 
@@ -34,9 +35,16 @@ export default function SiteHeader() {
     let active = true;
     const client = createSupabaseBrowserClient();
     if (!client) return;
-    void client.from('model_profiles').select('display_name').eq('user_id', user.id).maybeSingle().then(({ data }) => {
-      if (active && data?.display_name) setDisplayName(data.display_name);
-    });
+    void (async () => {
+      const { data: profile } = await client.from('model_profiles').select('id,display_name').eq('user_id', user.id).maybeSingle();
+      if (!active) return;
+      if (profile?.display_name) setDisplayName(profile.display_name);
+      if (!profile?.id) { setAvatarUrl(''); return; }
+      const { data: photo } = await client.from('model_photos').select('storage_path').eq('model_profile_id', profile.id).eq('photo_type', 'main').eq('moderation_status', 'approved').order('created_at', { ascending: false }).limit(1).maybeSingle();
+      if (!active || !photo?.storage_path) { setAvatarUrl(''); return; }
+      const { data: signed } = await client.storage.from('model-photos').createSignedUrl(photo.storage_path, 900);
+      if (active) setAvatarUrl(signed?.signedUrl || '');
+    })();
     return () => { active = false; };
   }, [user?.id]);
 
@@ -59,7 +67,7 @@ export default function SiteHeader() {
         <div className="site-account">
           {ready && user ? (
             <div className="site-account-wrap">
-              <button type="button" className="site-avatar" aria-label="Ouvrir le menu du compte" aria-expanded={menuOpen} onClick={() => setMenuOpen(value => !value)}>{initials}</button>
+              <button type="button" className="site-avatar" aria-label="Ouvrir le menu du compte" aria-expanded={menuOpen} onClick={() => setMenuOpen(value => !value)}>{avatarUrl ? <img src={avatarUrl} alt="" /> : initials}</button>
               <span className="site-account-name">{displayName}</span>
               {menuOpen && <div className="site-account-menu">
                 <strong>{displayName}</strong>
@@ -81,7 +89,8 @@ export default function SiteHeader() {
       .site-global-links a { white-space: nowrap; }
       .site-account { display: flex; align-items: center; gap: 8px; min-width: max-content; }
       .site-account-wrap { position: relative; display: flex; align-items: center; gap: 9px; }
-      .site-avatar { width: 42px; height: 42px; border: 0; border-radius: 50%; background: var(--clay, #A65B3A); color: white; font-weight: 800; cursor: pointer; }
+      .site-avatar { width: 42px; height: 42px; padding: 0; overflow: hidden; display: grid; place-items: center; border: 0; border-radius: 50%; background: var(--clay, #A65B3A); color: white; font-weight: 800; cursor: pointer; }
+      .site-avatar img { width: 100%; height: 100%; object-fit: cover; }
       .site-account-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; }
       .site-account-menu { position: absolute; top: calc(100% + 12px); right: 0; z-index: 80; display: grid; gap: 4px; min-width: 220px; padding: 12px; border: 1px solid var(--line, #e3d2c3); border-radius: 12px; background: #fffaf4; box-shadow: 0 14px 36px #2b170f26; }
       .site-account-menu strong { padding: 8px 10px; overflow-wrap: anywhere; }
