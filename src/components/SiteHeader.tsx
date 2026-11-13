@@ -2,12 +2,10 @@
 
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { usePathname } from 'next/navigation';
 import type { User } from '@supabase/supabase-js';
 import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 export default function SiteHeader() {
-  const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
   const [displayName, setDisplayName] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
@@ -16,28 +14,31 @@ export default function SiteHeader() {
   useEffect(() => {
     const client = createSupabaseBrowserClient();
     if (!client) { setReady(true); return; }
-    let active = true;
-    const loadAccount = async (nextUser: User | null) => {
-      if (!active) return;
+    void client.auth.getSession().then(({ data }) => {
+      const nextUser = data.session?.user ?? null;
       setUser(nextUser);
-      if (!nextUser) {
-        setDisplayName('');
-        setReady(true);
-        return;
-      }
-      const metadataName = String(nextUser.user_metadata?.artist_name || nextUser.user_metadata?.full_name || '');
-      const { data } = await client.from('model_profiles').select('display_name').eq('user_id', nextUser.id).maybeSingle();
-      if (active) {
-        setDisplayName(data?.display_name || metadataName || nextUser.email?.split('@')[0] || 'Mon compte');
-        setReady(true);
-      }
-    };
-    void client.auth.getSession().then(({ data }) => loadAccount(data.session?.user ?? null));
-    const { data: listener } = client.auth.onAuthStateChange((_event, session) => {
-      void loadAccount(session?.user ?? null);
+      setDisplayName(nextUser ? String(nextUser.user_metadata?.artist_name || nextUser.user_metadata?.full_name || nextUser.email?.split('@')[0] || 'Mon compte') : '');
+      setReady(true);
     });
-    return () => { active = false; listener.subscription.unsubscribe(); };
-  }, [pathname]);
+    const { data: listener } = client.auth.onAuthStateChange((_event, session) => {
+      const nextUser = session?.user ?? null;
+      setUser(nextUser);
+      setDisplayName(nextUser ? String(nextUser.user_metadata?.artist_name || nextUser.user_metadata?.full_name || nextUser.email?.split('@')[0] || 'Mon compte') : '');
+      setReady(true);
+    });
+    return () => listener.subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!user) return;
+    let active = true;
+    const client = createSupabaseBrowserClient();
+    if (!client) return;
+    void client.from('model_profiles').select('display_name').eq('user_id', user.id).maybeSingle().then(({ data }) => {
+      if (active && data?.display_name) setDisplayName(data.display_name);
+    });
+    return () => { active = false; };
+  }, [user?.id]);
 
   async function signOut() {
     const client = createSupabaseBrowserClient();
