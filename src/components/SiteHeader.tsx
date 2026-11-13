@@ -72,5 +72,23 @@ export default function SiteHeader() {
         </div>
       </div>
     </header>
+    <style jsx global>{`
+      .topbar:not(.site-global-header) { display: none !important; }
+      .site-global-header { position: sticky; top: 0; z-index: 50; }
+      .site-global-nav { min-height: 76px; }
+      .site-global-links { gap: clamp(10px, 1.5vw, 22px); }
+      .site-global-links a { white-space: nowrap; }
+      .site-account { display: flex; align-items: center; gap: 8px; min-width: max-content; }
+      .site-account-wrap { position: relative; display: flex; align-items: center; gap: 9px; }
+      .site-avatar { width: 42px; height: 42px; border: 0; border-radius: 50%; background: var(--clay, #A65B3A); color: white; font-weight: 800; cursor: pointer; }
+      .site-account-name { max-width: 130px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; }
+      .site-account-menu { position: absolute; top: calc(100% + 12px); right: 0; z-index: 80; display: grid; gap: 4px; min-width: 220px; padding: 12px; border: 1px solid var(--line, #e3d2c3); border-radius: 12px; background: #fffaf4; box-shadow: 0 14px 36px #2b170f26; }
+      .site-account-menu strong { padding: 8px 10px; overflow-wrap: anywhere; }
+      .site-account-menu a, .site-account-menu button { display: block; padding: 10px; border: 0; border-radius: 7px; background: transparent; color: var(--deep, #573B2D); text-align: left; text-decoration: none; font: inherit; font-size: 14px; cursor: pointer; }
+      .site-account-menu a:hover, .site-account-menu button:hover { background: #f3e8dd; }
+      .site-account-loading { width: 90px; height: 38px; }
+      @media (max-width: 950px) { .site-global-links { display: none; } .site-global-nav { min-height: 68px; } }
+      @media (max-width: 430px) { .site-account-name { display: none; } .site-global-nav { gap: 8px; } .site-global-nav > .brand { gap: 7px; letter-spacing: .07em; font-size: 12px; } .site-global-nav > .brand .brand-mark { width: 38px; height: 38px; } .site-account .button { min-height: 38px; padding: 7px 9px; font-size: 11px; } }
+    `}</style>
   );
 }
