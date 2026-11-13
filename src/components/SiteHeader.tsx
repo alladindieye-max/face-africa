@@ -58,6 +58,7 @@ export default function SiteHeader() {
   const initials = displayName.trim().split(/\s+/).slice(0, 2).map(part => part[0]?.toUpperCase()).join('') || 'FA';
 
   return (
+    <>
     <header className="topbar site-global-header">
       <div className="wrap nav site-global-nav">
         <Link href="/" className="brand" aria-label="FACEAFRICA — Accueil"><span className="brand-mark">FA</span><span>FACEAFRICA</span></Link>
