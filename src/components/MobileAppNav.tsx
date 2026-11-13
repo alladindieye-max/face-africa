@@ -2,7 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { createSupabaseBrowserClient } from '@/lib/supabase-browser';
 
 const primaryItems = [
   { href: '/', label: 'Accueil', icon: '⌂' },
@@ -11,18 +13,20 @@ const primaryItems = [
   { href: '/photographes', label: 'Photo', icon: '▧' },
 ];
 
-const moreItems = [
-  { href: '/academy', label: 'Academy' },
-  { href: '/marques', label: 'Marques' },
-  { href: '/articles', label: 'Articles' },
-  { href: '/shooting-photo', label: 'Shooting photo' },
-  { href: '/connexion', label: 'Connexion' },
-  { href: '/inscription', label: 'Créer mon profil' },
-];
-
 export default function MobileAppNav() {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  useEffect(() => {
+    const client = createSupabaseBrowserClient();
+    if (!client) return;
+    void client.auth.getSession().then(({ data }) => setUser(data.session?.user ?? null));
+    const { data } = client.auth.onAuthStateChange((_event, session) => setUser(session?.user ?? null));
+    return () => data.subscription.unsubscribe();
+  }, []);
+  const moreItems = user
+    ? [{ href: '/academy', label: 'Academy' }, { href: '/marques', label: 'Marques' }, { href: '/articles', label: 'Articles' }, { href: '/shooting-photo', label: 'Shooting photo' }, { href: '/espace', label: 'Mon espace mannequin' }]
+    : [{ href: '/academy', label: 'Academy' }, { href: '/marques', label: 'Marques' }, { href: '/articles', label: 'Articles' }, { href: '/shooting-photo', label: 'Shooting photo' }, { href: '/connexion', label: 'Connexion' }, { href: '/inscription', label: 'Créer mon profil' }];
   const isActive = (href: string) => href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(href + '/');
 
   return (
