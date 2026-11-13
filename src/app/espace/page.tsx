@@ -53,7 +53,7 @@ export default function EspacePage() {
   setApplications((applicationRows||[]) as unknown as Application[]);
   setLoading(false);
  }
- useEffect(()=>{void load();},[]);
+ useEffect(()=>{const requested=new URLSearchParams(window.location.search).get('tab');if(requested==='profile'||requested==='castings'||requested==='photos'||requested==='settings')setTab(requested);void load();},[]);
  function change<K extends keyof P>(key:K,value:P[K]){setProfile(old=>old?{...old,[key]:value}:old);}
  async function save(e:FormEvent<HTMLFormElement>){
   e.preventDefault();if(!client||!profile){setMessage('Échec : service de sauvegarde indisponible. Rechargez la page puis réessayez.');return;}setBusy(true);setMessage('Enregistrement de vos informations en cours…');
