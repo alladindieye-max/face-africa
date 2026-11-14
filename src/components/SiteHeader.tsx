@@ -101,5 +101,6 @@ export default function SiteHeader() {
       @media (max-width: 950px) { .site-global-links { display: none; } .site-global-nav { min-height: 68px; } }
       @media (max-width: 430px) { .site-account-name { display: none; } .site-global-nav { gap: 8px; } .site-global-nav > .brand { gap: 7px; letter-spacing: .07em; font-size: 12px; } .site-global-nav > .brand .brand-mark { width: 38px; height: 38px; } .site-account .button { min-height: 38px; padding: 7px 9px; font-size: 11px; } }
     `}</style>
+    </>
   );
 }
